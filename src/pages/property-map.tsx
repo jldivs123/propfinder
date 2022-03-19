@@ -77,7 +77,7 @@ const MapComponent: FC<Coordinates> = ({ children, lat, lng }) => {
         zoom: 10,
       }}
       style={{ width: "100%", height: "100vh" }}
-      mapStyle="mapbox://styles/mapbox/streets-v11"
+      mapStyle="mapbox://styles/mapbox/dark-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
     >
       {children}
@@ -90,7 +90,7 @@ const MapPage = () => {
   const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
     null
   );
-  const drawerWidth = "50%";
+  const drawerWidth = "33%";
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -136,7 +136,7 @@ const MapPage = () => {
           </PropertyFilter>
         }
       </StyledDrawer>
-      <MapContainer className="flex-1 shrink-0 map-container w-1/2">
+      <MapContainer className="flex-1 shrink-0 map-container w-2/3">
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}

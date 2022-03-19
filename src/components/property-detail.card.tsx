@@ -25,7 +25,7 @@ export const PropertyCard: React.FC<{
   const marketPrice = property.selling_price.replace(/ /g, "");
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345, cursor: "pointer" }}>
       <CardMedia
         component="img"
         alt="green iguana"

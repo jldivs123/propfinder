@@ -9,18 +9,24 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import styled from "styled-components";
 
 import { THEME_COLORS } from "../constants";
 
-const pages = ["Finder", "About us", "Blog"];
+const pages = ["Sell", "Buy", "Rent"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
+
+const StyledImg = styled.img`
+  width: 72px; /* or any custom size */
+  height: 36px;
+  object-fit: fill;
+`;
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const logo = "Homer-logos_white.png";
+  const logo = "HomeFinder.png";
 
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
@@ -94,14 +100,16 @@ const ResponsiveAppBar = () => {
               ))}
             </Menu>
           </Box>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+          <Box
+            sx={{
+              flexGrow: 1,
+              width: "36px",
+              height: "36px",
+              display: { xs: "none", md: "block", color: "black" },
+            }}
           >
-            Homer
-          </Typography>
+            <StyledImg src={logo} alt="Homer-logo" />
+          </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -109,7 +117,15 @@ const ResponsiveAppBar = () => {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "#000", display: "block" }}
               >
-                {page}
+                <Typography
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "500",
+                    color: "#000",
+                  }}
+                >
+                  {page}
+                </Typography>
               </Button>
             ))}
           </Box>

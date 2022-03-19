@@ -1,14 +1,8 @@
 import * as React from "react";
-import styled from "styled-components";
-import List from "@mui/material/List";
 import Box from "@mui/material/Box";
 
-import { GeoJSON, DUMMY_IMAGE, PropertyDetail } from "../constants";
+import { GeoJSON } from "../constants";
 import { PropertyDetailCard } from "../components";
-
-const Wrapper = styled.div`
-  border: 2px solid;
-`;
 
 export const PropertyList: React.FC<{ properties: Array<GeoJSON> }> = (
   props
@@ -27,6 +21,7 @@ export const PropertyList: React.FC<{ properties: Array<GeoJSON> }> = (
               margin: "10px 5px",
               padding: 0,
               bgcolor: "#white",
+              borderRadius: "16px",
               display: "flex",
             }}
           >
