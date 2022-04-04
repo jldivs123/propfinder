@@ -11,6 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import { THEME_COLORS } from "../constants";
 
@@ -26,8 +27,12 @@ const StyledImg = styled.img`
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const logo = "HomeFinder.png";
+  const logo = "/HomeFinder.png";
+  const navigate = useNavigate();
 
+  const goToHome = () => {
+    navigate("/");
+  };
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -62,7 +67,7 @@ const ResponsiveAppBar = () => {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color="primary"
             >
               <MenuIcon />
             </IconButton>
@@ -81,7 +86,7 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: "block", md: "none", color: "#000" },
               }}
             >
               {pages.map((page) => (
@@ -108,7 +113,9 @@ const ResponsiveAppBar = () => {
               display: { xs: "none", md: "block", color: "black" },
             }}
           >
-            <StyledImg src={logo} alt="Homer-logo" />
+            <Button onClick={goToHome}>
+              <StyledImg src={logo} alt="Homer-logo" />
+            </Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (

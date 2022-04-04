@@ -25,10 +25,10 @@ export const PropertyCard: React.FC<{
   const marketPrice = property.selling_price.replace(/ /g, "");
 
   return (
-    <Card sx={{ maxWidth: 345, cursor: "pointer" }}>
+    <Card sx={{ maxWidth: 345, cursor: "pointer", minwidth: 345 }}>
       <CardMedia
         component="img"
-        alt="green iguana"
+        alt="Property image"
         height="140"
         image={DUMMY_IMAGE}
       />
@@ -40,7 +40,11 @@ export const PropertyCard: React.FC<{
           <span>&#8369;</span>
           {marketPrice}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ textTransform: "uppercase" }}
+        >
           {property.address}
         </Typography>
       </CardContent>

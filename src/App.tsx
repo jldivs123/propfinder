@@ -2,9 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 // * Components
-import { MapPage } from "./pages/property-map";
+import { MapPage, PropertyDetailPage } from "./pages";
 import { ResponsiveAppBar } from "./components";
 
 import { ScreenSizeContextProvider } from "./utils";
@@ -16,6 +17,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
+  margin-top: 84px;
 `;
 
 const AppContainer = styled.div`
@@ -65,7 +67,9 @@ function App() {
                 <Route path="/" element={<MapPage />}>
                   Map
                 </Route>
-                <Route path="/properties/id">Exact Property</Route>
+                <Route path="/properties/:id" element={<PropertyDetailPage />}>
+                  Exact Property
+                </Route>
                 {/* <Route path="/">Home</Route> */}
               </Routes>
             </Wrapper>

@@ -4,14 +4,11 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import PanoramaPhotosphereIcon from "@mui/icons-material/PanoramaPhotosphere";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
-import LinkIcon from "@mui/icons-material/Link";
-import ContactsIcon from "@mui/icons-material/Contacts";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import { GeoJSON, DUMMY_IMAGE, PropertyDetail } from "../constants";
 
@@ -24,6 +21,7 @@ interface IPropertyDetailCard {
   numOfRoom?: number;
   imgUrls?: string[];
   withVirtualTour?: boolean;
+  onClick: () => void;
 }
 
 const numberGenerator = (type: "room" | "area") => {
@@ -43,10 +41,19 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     numOfRoom,
     imgUrls,
     withVirtualTour,
+    onClick,
   } = props;
 
   return (
-    <Card sx={{ display: "flex", bgcolor: "#fff", borderRadius: "16px" }}>
+    <Card
+      onClick={onClick}
+      sx={{
+        display: "flex",
+        bgcolor: "#fff",
+        borderRadius: "16px",
+        cursor: "pointer",
+      }}
+    >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <CardContent sx={{ flex: "1 0 auto" }}>
           <Typography
@@ -60,7 +67,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
             </b>
           </Typography>
           <Typography component="div" variant="body1">
-            <b>{type}</b>
+            {type}
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body2">
@@ -73,7 +80,10 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
               {numberGenerator("area")} sqm
             </Typography>
           </Box>
-          <Typography variant="body2">{address}</Typography>
+          <Typography variant="body2">
+            <LocationOnIcon />
+            {address}
+          </Typography>
         </CardContent>
         <Box sx={{ display: "flex" }}>
           {lotSize && <AspectRatioIcon>lotSize</AspectRatioIcon>}
