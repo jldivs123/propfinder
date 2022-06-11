@@ -14,6 +14,7 @@ import {
   MANILA_LATITUDE,
   MANILA_LONGITUDE,
   PropertyDetail,
+  GOOGLE_STREETVIEW_URL,
 } from "../../constants";
 import { PropertySpec, ImageObj } from "./elements";
 
@@ -28,6 +29,14 @@ const FEATURES = [
   { name: "Type", value: "Row House", reverse: true },
   { name: "City", value: "Manila", reverse: true },
 ];
+
+const virtualTour = () => {
+  const coordinates = GOOGLE_STREETVIEW_URL.replace(
+    `latitude`,
+    `14.5700789`
+  ).replace(`longitude`, `121.0466021`);
+  window.open(coordinates);
+};
 
 export const Property = (propertyDetails: PropertyDetail) => {
   const {
@@ -366,7 +375,9 @@ export const Property = (propertyDetails: PropertyDetail) => {
         </Box>
         <Button variant="outlined">Start an offer</Button>
         <Button variant="contained">Take a tour</Button>
-        <Button variant="contained">Virtual tour</Button>
+        <Button variant="contained" onClick={virtualTour}>
+          Virtual tour
+        </Button>
       </Box>
     </Box>
   );
