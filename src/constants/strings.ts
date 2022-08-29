@@ -14,3 +14,5 @@ export const THEME_COLORS = {
   YELLOW: "#ECC551",
   GRAY: "#F2F2F2",
 };
+
+export const BASE_URL = "http://localhost:4000";

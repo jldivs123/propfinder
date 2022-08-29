@@ -7,13 +7,10 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-import { THEME_COLORS } from "../constants";
 
 const pages = ["Sell", "Buy", "Rent"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -56,6 +53,7 @@ const ResponsiveAppBar = () => {
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
         backgroundColor: (theme) => "#FFF",
+        height: 84,
       }}
     >
       <Container maxWidth="xl">
