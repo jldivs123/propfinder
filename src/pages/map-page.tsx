@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FC, useState, useEffect } from "react";
 import ReactMap, { Marker, Popup } from "react-map-gl";
+import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,14 +10,10 @@ import { THEME_COLORS } from "../constants";
 import { PropertyFilter, PropertyCard, PropertyList } from "../components";
 import {
   MAPBOX_PUBLIC_TOKEN,
-  data,
   MANILA_LATITUDE,
   GeoJSON,
   MANILA_LONGITUDE,
 } from "../constants";
-
-const dummmyData = JSON.parse(JSON.stringify(data));
-const properties = dummmyData.features;
 
 export interface Coordinates {
   lat: number;
@@ -46,7 +43,7 @@ const MapContainer = styled.div``;
 const Markers = (onClick: (args: any) => any) => {
   return (
     <>
-      {properties.map((property: GeoJSON, index: number) => {
+      {/* {properties.map((property: GeoJSON, index: number) => {
         const latitude = property.geometry.coordinates[1];
         const longitude = property.geometry.coordinates[0];
         return (
@@ -63,12 +60,23 @@ const Markers = (onClick: (args: any) => any) => {
             />
           </Marker>
         );
-      })}
+      })} */}
     </>
   );
 };
 
-const MapComponent: FC<Coordinates> = ({ children, lat, lng }) => {
+const MapComponent: FC<
+  Coordinates & { viewStateHandler: (value: any) => void }
+> = ({ children, lat, lng, viewStateHandler }) => {
+  // * Philippine Area of Responsibility
+  const southWest = new LngLat(115.07080078125, 5.014338718527209);
+  const northEast = new LngLat(128.4521484375, 20.014645445341365);
+  // const bounds = [
+  //   { lng: 115.07080078125, lat: 5.014338718527209 },
+  //   { lng: 128.4521484375, lat: 20.014645445341365 },
+  // ];
+  const bounds = new LngLatBounds(southWest, northEast);
+
   return (
     <ReactMap
       initialViewState={{
@@ -76,9 +84,16 @@ const MapComponent: FC<Coordinates> = ({ children, lat, lng }) => {
         latitude: lat,
         zoom: 10,
       }}
+      onZoom={(e) => {
+        viewStateHandler(e.viewState);
+      }}
+      onMove={(e) => viewStateHandler(e.viewState)}
       style={{ width: "100%", height: "100vh" }}
-      mapStyle="mapbox://styles/mapbox/dark-v10"
+      mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
+      maxBounds={bounds}
+      maxZoom={13}
+      minZoom={5}
     >
       {children}
     </ReactMap>
@@ -86,11 +101,11 @@ const MapComponent: FC<Coordinates> = ({ children, lat, lng }) => {
 };
 
 const MapPage = () => {
+  const [viewState, setViewState] = useState<any>();
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
     null
   );
-  const drawerWidth = "33%";
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -108,6 +123,10 @@ const MapPage = () => {
     );
   }, []);
 
+  useEffect(() => {
+    console.log(viewState);
+  }, [viewState]);
+
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);
     setIsPropertyDrawerActive(true);
@@ -117,14 +136,7 @@ const MapPage = () => {
     <div className="flex mx-0 w-full">
       <StyledDrawer
         variant="permanent"
-        sx={{
-          flexShrink: 0,
-          width: drawerWidth,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
+        className="w-1/3 bg-white"
         ModalProps={{
           keepMounted: true,
         }}
@@ -132,7 +144,7 @@ const MapPage = () => {
         <Toolbar />
         {
           <PropertyFilter>
-            <PropertyList properties={properties} />
+            {/* <PropertyList properties={properties} /> */}
           </PropertyFilter>
         }
       </StyledDrawer>
@@ -140,6 +152,9 @@ const MapPage = () => {
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
+          viewStateHandler={(viewStateEventPayload) =>
+            setViewState(viewStateEventPayload)
+          }
         >
           {Markers(openPropertyDetails)}
           {isPropertyModalActive && selectedProperty && (
