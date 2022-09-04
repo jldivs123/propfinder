@@ -17,8 +17,8 @@ export function useApi<T>(
 
   const invokeApi = useCallback(
     async (
-      params: GenericInterface | null,
-      payload?: GenericInterface | null | undefined,
+      params?: GenericInterface | null,
+      payload?: GenericInterface | null,
       headers = {
         "Content-Type": "application/json",
         Accept: "application/json",

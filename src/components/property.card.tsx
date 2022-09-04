@@ -54,7 +54,10 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
         cursor: "pointer",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{ display: "flex", flexDirection: "column" }}
+        className="max-w-lg"
+      >
         <CardContent sx={{ flex: "1 0 auto" }}>
           <Typography
             variant="subtitle1"
@@ -82,7 +85,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
           </Box>
           <Typography variant="body2">
             <LocationOnIcon />
-            {address}
+            {address.replace(/ /g, "")}
           </Typography>
         </CardContent>
         <Box sx={{ display: "flex" }}>

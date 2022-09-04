@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { FC, useState, useEffect } from "react";
-import ReactMap, { Marker, Popup } from "react-map-gl";
+import { FC, useState, useEffect, useRef } from "react";
+import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
+import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Drawer from "@mui/material/Drawer";
@@ -14,6 +15,9 @@ import {
   GeoJSON,
   MANILA_LONGITUDE,
 } from "../constants";
+import { useDebounce } from "../utils/hooks";
+import { calculateGeohashPrecision } from "../utils";
+import { getNearestProperties } from "../lib/apis";
 
 export interface Coordinates {
   lat: number;
@@ -40,12 +44,12 @@ export const getUserAddress = (
 
 const MapContainer = styled.div``;
 // * https://github.com/visgl/react-map-gl/issues/750
-const Markers = (onClick: (args: any) => any) => {
+const Markers = (onClick: (args: any) => any, properties: any) => {
   return (
     <>
-      {/* {properties.map((property: GeoJSON, index: number) => {
-        const latitude = property.geometry.coordinates[1];
-        const longitude = property.geometry.coordinates[0];
+      {properties.map((property: any, index: number) => {
+        const latitude = property.geojson.geometry.coordinates[1];
+        const longitude = property.geojson.geometry.coordinates[0];
         return (
           <Marker
             key={"marker-" + index}
@@ -60,7 +64,7 @@ const Markers = (onClick: (args: any) => any) => {
             />
           </Marker>
         );
-      })} */}
+      })}
     </>
   );
 };
@@ -69,31 +73,50 @@ const MapComponent: FC<
   Coordinates & { viewStateHandler: (value: any) => void }
 > = ({ children, lat, lng, viewStateHandler }) => {
   // * Philippine Area of Responsibility
-  const southWest = new LngLat(115.07080078125, 5.014338718527209);
+  const southWest = new LngLat(114.873046875, 5.090944175033399);
   const northEast = new LngLat(128.4521484375, 20.014645445341365);
-  // const bounds = [
-  //   { lng: 115.07080078125, lat: 5.014338718527209 },
-  //   { lng: 128.4521484375, lat: 20.014645445341365 },
-  // ];
   const bounds = new LngLatBounds(southWest, northEast);
+  const mapRef = useRef<MapRef | null>(null);
+
+  const stateHandler = (value: any) => {
+    const map = mapRef.current;
+    if (map) {
+      const bounds: any = map.getMap()?.getBounds();
+      const boundCoordinates: any = [
+        [bounds._ne.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._sw.lng],
+      ];
+      // * `polygon` variable represents the rectangular area
+      const polygon: any = [
+        [bounds._ne.lat, bounds._sw.lng],
+        [bounds._ne.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._sw.lng],
+      ];
+      const area = convertArea(getAreaOfPolygon(polygon), "km2");
+      const center = getCenterOfBounds(boundCoordinates);
+      viewStateHandler({ area, center });
+    }
+  };
 
   return (
     <ReactMap
       initialViewState={{
         longitude: lng,
         latitude: lat,
-        zoom: 10,
+        zoom: 4,
       }}
+      ref={mapRef}
       onZoom={(e) => {
-        viewStateHandler(e.viewState);
+        stateHandler(e.viewState);
       }}
-      onMove={(e) => viewStateHandler(e.viewState)}
-      style={{ width: "100%", height: "100vh" }}
+      onMove={(e: any) => stateHandler(e.viewState)}
+      style={{ width: "100%", height: "90vh" }}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-      maxBounds={bounds}
-      maxZoom={13}
-      minZoom={5}
+      // maxBounds={bounds}
+      maxZoom={18}
+      minZoom={3}
     >
       {children}
     </ReactMap>
@@ -102,6 +125,14 @@ const MapComponent: FC<
 
 const MapPage = () => {
   const [viewState, setViewState] = useState<any>();
+  const debouncedViewingArea = useDebounce(viewState, 500);
+  const {
+    response: nearestProperties,
+    isLoading: isFetchingNearProperties,
+    error: nearPropertiesError,
+    invokeApi: fetchNearProperties,
+  } = getNearestProperties();
+  const debouncedNearProperties = useDebounce(nearestProperties, 500);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
     null
@@ -124,8 +155,16 @@ const MapPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(viewState);
-  }, [viewState]);
+    if (debouncedViewingArea) {
+      const area = debouncedViewingArea.area;
+      const precision = calculateGeohashPrecision(area);
+      fetchNearProperties({
+        leftEdge: debouncedViewingArea.center.latitude,
+        rightEdge: debouncedViewingArea.center.longitude,
+        precision: 1,
+      });
+    }
+  }, [debouncedViewingArea]);
 
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);
@@ -133,10 +172,10 @@ const MapPage = () => {
   };
 
   return (
-    <div className="flex mx-0 w-full">
+    <div className="flex mx-0 w-full border-solid border-1 border-indigo-600">
       <StyledDrawer
         variant="permanent"
-        className="w-1/3 bg-white"
+        className="w-1/3 bg-white max-w-4xl"
         ModalProps={{
           keepMounted: true,
         }}
@@ -144,11 +183,17 @@ const MapPage = () => {
         <Toolbar />
         {
           <PropertyFilter>
-            {/* <PropertyList properties={properties} /> */}
+            <PropertyList
+              properties={
+                (debouncedNearProperties as any)
+                  ? (debouncedNearProperties as any).results
+                  : []
+              }
+            />
           </PropertyFilter>
         }
       </StyledDrawer>
-      <MapContainer className="flex-1 shrink-0 map-container w-2/3">
+      <MapContainer className="flex-1 shrink-1 map-container w-2/3 h-100">
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
@@ -156,7 +201,12 @@ const MapPage = () => {
             setViewState(viewStateEventPayload)
           }
         >
-          {Markers(openPropertyDetails)}
+          {Markers(
+            openPropertyDetails,
+            (debouncedNearProperties as any)
+              ? (debouncedNearProperties as any).results
+              : []
+          )}
           {isPropertyModalActive && selectedProperty && (
             <StyledPopup
               anchor="bottom"
