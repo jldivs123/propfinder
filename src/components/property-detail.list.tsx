@@ -2,23 +2,23 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
-import { GeoJSON, PropertyDetail } from "../constants";
 import { PropertyDetailCard } from "../components";
 
-export const PropertyList: React.FC<{ properties: Array<GeoJSON> }> = (
-  props
-) => {
+export const PropertyList: React.FC<{ properties: Array<any> }> = (props) => {
   const { properties } = props;
   const navigate = useNavigate();
 
-  const visitProperty = (propertyId: string, state: PropertyDetail) => {
-    navigate("/properties/" + propertyId, { state });
+  const visitProperty = (propertyId: string, property: any) => {
+    navigate("/properties/" + propertyId);
   };
   return (
     <Box sx={{ width: "100%", bgcolor: "#FFF" }}>
       {properties.map((property) => {
-        const propertyData = property.properties;
-        const props = { price: propertyData.selling_price, ...propertyData };
+        const propertyData = property.geojson.properties;
+        const props = {
+          price: propertyData.minimumSellingPrice ?? 0,
+          ...propertyData,
+        };
         return (
           <Box
             key={propertyData.address}

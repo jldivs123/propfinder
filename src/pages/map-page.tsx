@@ -15,6 +15,9 @@ import {
   GeoJSON,
   MANILA_LONGITUDE,
 } from "../constants";
+import { useDebounce } from "../utils/hooks";
+import { calculateGeohashPrecision } from "../utils";
+import { getNearestProperties } from "../lib/apis";
 
 export interface Coordinates {
   lat: number;
@@ -41,12 +44,12 @@ export const getUserAddress = (
 
 const MapContainer = styled.div``;
 // * https://github.com/visgl/react-map-gl/issues/750
-const Markers = (onClick: (args: any) => any) => {
+const Markers = (onClick: (args: any) => any, properties: any) => {
   return (
     <>
-      {/* {properties.map((property: GeoJSON, index: number) => {
-        const latitude = property.geometry.coordinates[1];
-        const longitude = property.geometry.coordinates[0];
+      {properties.map((property: any, index: number) => {
+        const latitude = property.geojson.geometry.coordinates[1];
+        const longitude = property.geojson.geometry.coordinates[0];
         return (
           <Marker
             key={"marker-" + index}
@@ -61,7 +64,7 @@ const Markers = (onClick: (args: any) => any) => {
             />
           </Marker>
         );
-      })} */}
+      })}
     </>
   );
 };
@@ -111,8 +114,8 @@ const MapComponent: FC<
       style={{ width: "100%", height: "90vh" }}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-      maxBounds={bounds}
-      maxZoom={13}
+      // maxBounds={bounds}
+      maxZoom={18}
       minZoom={3}
     >
       {children}
@@ -122,6 +125,14 @@ const MapComponent: FC<
 
 const MapPage = () => {
   const [viewState, setViewState] = useState<any>();
+  const debouncedViewingArea = useDebounce(viewState, 500);
+  const {
+    response: nearestProperties,
+    isLoading: isFetchingNearProperties,
+    error: nearPropertiesError,
+    invokeApi: fetchNearProperties,
+  } = getNearestProperties();
+  const debouncedNearProperties = useDebounce(nearestProperties, 500);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
     null
@@ -144,8 +155,16 @@ const MapPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(viewState);
-  }, [viewState]);
+    if (debouncedViewingArea) {
+      const area = debouncedViewingArea.area;
+      const precision = calculateGeohashPrecision(area);
+      fetchNearProperties({
+        leftEdge: debouncedViewingArea.center.latitude,
+        rightEdge: debouncedViewingArea.center.longitude,
+        precision: 1,
+      });
+    }
+  }, [debouncedViewingArea]);
 
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);
@@ -156,7 +175,7 @@ const MapPage = () => {
     <div className="flex mx-0 w-full border-solid border-1 border-indigo-600">
       <StyledDrawer
         variant="permanent"
-        className="w-1/3 bg-white"
+        className="w-1/3 bg-white max-w-4xl"
         ModalProps={{
           keepMounted: true,
         }}
@@ -164,7 +183,13 @@ const MapPage = () => {
         <Toolbar />
         {
           <PropertyFilter>
-            {/* <PropertyList properties={properties} /> */}
+            <PropertyList
+              properties={
+                (debouncedNearProperties as any)
+                  ? (debouncedNearProperties as any).results
+                  : []
+              }
+            />
           </PropertyFilter>
         }
       </StyledDrawer>
@@ -176,7 +201,12 @@ const MapPage = () => {
             setViewState(viewStateEventPayload)
           }
         >
-          {Markers(openPropertyDetails)}
+          {Markers(
+            openPropertyDetails,
+            (debouncedNearProperties as any)
+              ? (debouncedNearProperties as any).results
+              : []
+          )}
           {isPropertyModalActive && selectedProperty && (
             <StyledPopup
               anchor="bottom"
