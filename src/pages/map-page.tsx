@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { FC, useState, useEffect } from "react";
-import ReactMap, { Marker, Popup } from "react-map-gl";
+import { FC, useState, useEffect, useRef } from "react";
+import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
+import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Drawer from "@mui/material/Drawer";
@@ -69,31 +70,50 @@ const MapComponent: FC<
   Coordinates & { viewStateHandler: (value: any) => void }
 > = ({ children, lat, lng, viewStateHandler }) => {
   // * Philippine Area of Responsibility
-  const southWest = new LngLat(115.07080078125, 5.014338718527209);
+  const southWest = new LngLat(114.873046875, 5.090944175033399);
   const northEast = new LngLat(128.4521484375, 20.014645445341365);
-  // const bounds = [
-  //   { lng: 115.07080078125, lat: 5.014338718527209 },
-  //   { lng: 128.4521484375, lat: 20.014645445341365 },
-  // ];
   const bounds = new LngLatBounds(southWest, northEast);
+  const mapRef = useRef<MapRef | null>(null);
+
+  const stateHandler = (value: any) => {
+    const map = mapRef.current;
+    if (map) {
+      const bounds: any = map.getMap()?.getBounds();
+      const boundCoordinates: any = [
+        [bounds._ne.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._sw.lng],
+      ];
+      // * `polygon` variable represents the rectangular area
+      const polygon: any = [
+        [bounds._ne.lat, bounds._sw.lng],
+        [bounds._ne.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._ne.lng],
+        [bounds._sw.lat, bounds._sw.lng],
+      ];
+      const area = convertArea(getAreaOfPolygon(polygon), "km2");
+      const center = getCenterOfBounds(boundCoordinates);
+      viewStateHandler({ area, center });
+    }
+  };
 
   return (
     <ReactMap
       initialViewState={{
         longitude: lng,
         latitude: lat,
-        zoom: 10,
+        zoom: 4,
       }}
+      ref={mapRef}
       onZoom={(e) => {
-        viewStateHandler(e.viewState);
+        stateHandler(e.viewState);
       }}
-      onMove={(e) => viewStateHandler(e.viewState)}
-      style={{ width: "100%", height: "100vh" }}
+      onMove={(e: any) => stateHandler(e.viewState)}
+      style={{ width: "100%", height: "90vh" }}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
       maxBounds={bounds}
       maxZoom={13}
-      minZoom={5}
+      minZoom={3}
     >
       {children}
     </ReactMap>
@@ -133,7 +153,7 @@ const MapPage = () => {
   };
 
   return (
-    <div className="flex mx-0 w-full">
+    <div className="flex mx-0 w-full border-solid border-1 border-indigo-600">
       <StyledDrawer
         variant="permanent"
         className="w-1/3 bg-white"
@@ -148,7 +168,7 @@ const MapPage = () => {
           </PropertyFilter>
         }
       </StyledDrawer>
-      <MapContainer className="flex-1 shrink-0 map-container w-2/3">
+      <MapContainer className="flex-1 shrink-1 map-container w-2/3 h-100">
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
