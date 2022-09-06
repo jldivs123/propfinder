@@ -17,7 +17,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const StyledImg = styled.img`
   width: 72px; /* or any custom size */
-  height: 36px;
+  height: 32px;
   object-fit: fill;
 `;
 
@@ -53,8 +53,8 @@ const ResponsiveAppBar = () => {
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
         backgroundColor: (theme) => "#FFF",
-        height: 84,
       }}
+      className="h-16"
     >
       <Container maxWidth="xl">
         <Toolbar>
@@ -111,7 +111,7 @@ const ResponsiveAppBar = () => {
               display: { xs: "none", md: "block", color: "black" },
             }}
           >
-            <Button onClick={goToHome}>
+            <Button onClick={goToHome} style={{ marginTop: "-5px" }}>
               <StyledImg src={logo} alt="Homer-logo" />
             </Button>
           </Box>

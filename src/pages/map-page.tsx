@@ -4,7 +4,6 @@ import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
 import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 
 import { THEME_COLORS } from "../constants";
@@ -26,10 +25,6 @@ export interface Coordinates {
 
 const StyledPopup = styled(Popup)`
   border: 2px solid red;
-`;
-
-const StyledDrawer = styled(Drawer)`
-  background-color: ${THEME_COLORS.GRAY};
 `;
 
 export const getUserAddress = (
@@ -107,9 +102,6 @@ const MapComponent: FC<
         zoom: 4,
       }}
       ref={mapRef}
-      onZoom={(e) => {
-        stateHandler(e.viewState);
-      }}
       onMove={(e: any) => stateHandler(e.viewState)}
       style={{ width: "100%", height: "90vh" }}
       mapStyle="mapbox://styles/mapbox/light-v10"
@@ -161,7 +153,7 @@ const MapPage = () => {
       fetchNearProperties({
         leftEdge: debouncedViewingArea.center.latitude,
         rightEdge: debouncedViewingArea.center.longitude,
-        precision: 1,
+        precision,
       });
     }
   }, [debouncedViewingArea]);
@@ -172,28 +164,18 @@ const MapPage = () => {
   };
 
   return (
-    <div className="flex mx-0 w-full border-solid border-1 border-indigo-600">
-      <StyledDrawer
-        variant="permanent"
-        className="w-1/3 bg-white max-w-4xl"
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        <Toolbar />
-        {
-          <PropertyFilter>
-            <PropertyList
-              properties={
-                (debouncedNearProperties as any)
-                  ? (debouncedNearProperties as any).results
-                  : []
-              }
-            />
-          </PropertyFilter>
-        }
-      </StyledDrawer>
-      <MapContainer className="flex-1 shrink-1 map-container w-2/3 h-100">
+    <div className="flex mx-0 w-full">
+      <PropertyFilter>
+        {/* <Toolbar /> */}
+        <PropertyList
+          properties={
+            (debouncedNearProperties as any)
+              ? (debouncedNearProperties as any).results
+              : []
+          }
+        />
+      </PropertyFilter>
+      <MapContainer className="map-container w-2/3 h-100">
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}

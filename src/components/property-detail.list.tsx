@@ -9,29 +9,18 @@ export const PropertyList: React.FC<{ properties: Array<any> }> = (props) => {
   const navigate = useNavigate();
 
   const visitProperty = (propertyId: string, property: any) => {
-    navigate("/properties/" + propertyId);
+    navigate("/properties/" + propertyId, { state: property });
   };
   return (
-    <Box sx={{ width: "100%", bgcolor: "#FFF" }}>
-      {properties.map((property) => {
+    <Box className="flex flex-row grow flex-wrap pt-3 h-full overflow-y-scroll w-full pl-3 content-between justify-between">
+      {properties.map((property: any) => {
         const propertyData = property.geojson.properties;
         const props = {
           price: propertyData.minimumSellingPrice ?? 0,
           ...propertyData,
         };
         return (
-          <Box
-            key={propertyData.address}
-            sx={{
-              boxShadow: 2,
-              width: "98%",
-              margin: "10px 5px",
-              padding: 0,
-              bgcolor: "#white",
-              borderRadius: "16px",
-              display: "flex",
-            }}
-          >
+          <Box key={propertyData.address} className="flex w-1/2 my-2.5">
             <PropertyDetailCard
               onClick={() => visitProperty(props.address, propertyData)}
               {...props}
