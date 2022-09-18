@@ -59,7 +59,7 @@ function App() {
     <ScreenSizeContextProvider>
       <ThemeProvider theme={lightTheme}>
         <BrowserRouter>
-          <AppContainer className="flex max-h-screen">
+          <AppContainer className="flex max-h-screen flex-col">
             <ResponsiveAppBar />
             <Wrapper className="grow">
               <Routes>

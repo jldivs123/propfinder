@@ -5,6 +5,8 @@ import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Toolbar from "@mui/material/Toolbar";
+import { Puff } from "react-loader-spinner";
+import Typography from "@mui/material/Typography";
 
 import { THEME_COLORS } from "../constants";
 import { PropertyFilter, PropertyCard, PropertyList } from "../components";
@@ -39,24 +41,44 @@ export const getUserAddress = (
 
 const MapContainer = styled.div``;
 // * https://github.com/visgl/react-map-gl/issues/750
-const Markers = (onClick: (args: any) => any, properties: any) => {
+const Markers = (
+  onClick: (args: any) => any,
+  properties: any,
+  activeProperty: any
+) => {
+  let formatter = Intl.NumberFormat("en", { notation: "compact" });
+
   return (
     <>
       {properties.map((property: any, index: number) => {
-        const latitude = property.geojson.geometry.coordinates[1];
-        const longitude = property.geojson.geometry.coordinates[0];
+        const latitude = property.geojson.geometry.coordinates[0];
+        const longitude = property.geojson.geometry.coordinates[1];
+        const price =
+          property.geojson.properties.minimumSellingPrice.replace(
+            /[, ]+/g,
+            ""
+          ) ?? "0";
         return (
           <Marker
             key={"marker-" + index}
-            latitude={latitude}
-            longitude={longitude}
+            latitude={longitude}
+            longitude={latitude}
           >
-            <img
-              src="./Home_4.png"
-              onClick={() => {
-                onClick(property);
+            <div
+              className="flex justify-center items-center shadow-lg rounded-2xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
+              onClick={() => onClick(property)}
+              style={{
+                width: "64px",
+                background:
+                  activeProperty?.pk === property.pk ? "#1e293b" : "white",
+                height: "32px",
+                color: activeProperty?.pk === property.pk ? "white" : "black",
               }}
-            />
+            >
+              <Typography fontWeight={600} fontSize={14}>
+                &#8369;{formatter.format(Number(price))}
+              </Typography>
+            </div>
           </Marker>
         );
       })}
@@ -77,10 +99,6 @@ const MapComponent: FC<
     const map = mapRef.current;
     if (map) {
       const bounds: any = map.getMap()?.getBounds();
-      const boundCoordinates: any = [
-        [bounds._ne.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._sw.lng],
-      ];
       // * `polygon` variable represents the rectangular area
       const polygon: any = [
         [bounds._ne.lat, bounds._sw.lng],
@@ -89,8 +107,17 @@ const MapComponent: FC<
         [bounds._sw.lat, bounds._sw.lng],
       ];
       const area = convertArea(getAreaOfPolygon(polygon), "km2");
-      const center = getCenterOfBounds(boundCoordinates);
-      viewStateHandler({ area, center });
+      const center = getCenterOfBounds(polygon);
+      viewStateHandler({
+        area,
+        center,
+        bounds: {
+          minLat: bounds._sw.lat,
+          maxLat: bounds._ne.lat,
+          minLng: bounds._sw.lng,
+          maxLng: bounds._ne.lng,
+        },
+      });
     }
   };
 
@@ -103,7 +130,13 @@ const MapComponent: FC<
       }}
       ref={mapRef}
       onMove={(e: any) => stateHandler(e.viewState)}
-      style={{ width: "100%", height: "90vh" }}
+      style={{
+        width: "63%",
+        minHeight: "100px",
+        height: "calc(100% - 64px)",
+        position: "fixed",
+        flexGrow: "1",
+      }}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
       // maxBounds={bounds}
@@ -121,7 +154,6 @@ const MapPage = () => {
   const {
     response: nearestProperties,
     isLoading: isFetchingNearProperties,
-    error: nearPropertiesError,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
   const debouncedNearProperties = useDebounce(nearestProperties, 500);
@@ -129,6 +161,7 @@ const MapPage = () => {
   const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
     null
   );
+  const [activeProperty, setActiveProperty] = useState<GeoJSON | null>(null);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -148,11 +181,12 @@ const MapPage = () => {
 
   useEffect(() => {
     if (debouncedViewingArea) {
-      const area = debouncedViewingArea.area;
+      const { area, center } = debouncedViewingArea;
       const precision = calculateGeohashPrecision(area);
+      // ! For some reason, they are reversed
       fetchNearProperties({
-        leftEdge: debouncedViewingArea.center.latitude,
-        rightEdge: debouncedViewingArea.center.longitude,
+        lat: center.longitude,
+        lng: center.latitude,
         precision,
       });
     }
@@ -163,19 +197,39 @@ const MapPage = () => {
     setIsPropertyDrawerActive(true);
   };
 
+  const onPropertyHover = (property: any) => {
+    setActiveProperty(property);
+    setIsPropertyDrawerActive(true);
+  };
+
   return (
-    <div className="flex mx-0 w-full">
+    <div className="flex mx-0 w-full h-max min-h-screen">
       <PropertyFilter>
         {/* <Toolbar /> */}
-        <PropertyList
-          properties={
-            (debouncedNearProperties as any)
-              ? (debouncedNearProperties as any).results
-              : []
-          }
-        />
+        {isFetchingNearProperties && (
+          <Puff
+            height="80"
+            width="80"
+            radius={1}
+            color="#000"
+            ariaLabel="puff-loading"
+            wrapperStyle={{}}
+            wrapperClass="m-auto my-2"
+            visible={true}
+          />
+        )}{" "}
+        {!isFetchingNearProperties && (
+          <PropertyList
+            properties={
+              (debouncedNearProperties as any)
+                ? (debouncedNearProperties as any).results
+                : []
+            }
+            onHover={onPropertyHover}
+          />
+        )}
       </PropertyFilter>
-      <MapContainer className="map-container w-2/3 h-100">
+      <MapContainer className="relative w-2/3 h-100 flex">
         <MapComponent
           lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
           lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
@@ -187,7 +241,8 @@ const MapPage = () => {
             openPropertyDetails,
             (debouncedNearProperties as any)
               ? (debouncedNearProperties as any).results
-              : []
+              : [],
+            activeProperty
           )}
           {isPropertyModalActive && selectedProperty && (
             <StyledPopup

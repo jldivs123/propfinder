@@ -10,7 +10,9 @@ const Wrapper = styled.div<FC>`
 
 const PropertyFilter: FC = ({ children }) => {
   return (
-    <Wrapper className="h-full w-2/5 h-100 max-h-full">{children}</Wrapper>
+    <Wrapper className="h-full w-2/5 h-100 max-h-full min-h-screen justify-center align-center">
+      {children}
+    </Wrapper>
   );
 };
 
