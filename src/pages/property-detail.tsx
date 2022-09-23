@@ -9,8 +9,6 @@ import {
   Property,
   randomRoom,
 } from "../components/property-detail";
-import { PropertyDetail } from "../constants";
-
 export const DUMMY_IMAGES: ImageObj[] = [
   {
     url: "https://images.unsplash.com/photo-1549388604-817d15aa0110?",
@@ -65,24 +63,20 @@ export const DUMMY_IMAGES: ImageObj[] = [
 const Wrapper = styled.div`
   margin: auto;
   padding: 0;
+  border: 1px solid red;
 `;
 
 export const PropertyDetailPage = () => {
   const { id: address } = useParams();
   const { state } = useLocation();
-  const property = state as PropertyDetail;
+  const property = state as any;
   console.log(property);
 
   return (
-    <Wrapper className="w-2/3 border-indigo-600 flex-column">
-      <Box sx={{ display: "flex", width: "100%" }}>
-        {/* <Carousel centerMode dynamicHeight>
-          {renderRooms()}
-        </Carousel> */}
-        {ImageListComponent(DUMMY_IMAGES)}
-      </Box>
-      <Box>{Property(property)}</Box>
-      <Box>Footer</Box>
+    <Wrapper className="w-full border-indigo-600 flex lg:flex-row sm:flex-col h-100 grow">
+      <div className="basis-1/4"></div>
+      <div className="basis-1/2 border-2 border-indigo-600 "></div>
+      <div className="basis-1/4"></div>
     </Wrapper>
   );
 };

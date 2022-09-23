@@ -4,11 +4,9 @@ import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
 import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Toolbar from "@mui/material/Toolbar";
 import { Puff } from "react-loader-spinner";
 import Typography from "@mui/material/Typography";
 
-import { THEME_COLORS } from "../constants";
 import { PropertyFilter, PropertyCard, PropertyList } from "../components";
 import {
   MAPBOX_PUBLIC_TOKEN,
@@ -191,6 +189,14 @@ const MapPage = () => {
       });
     }
   }, [debouncedViewingArea]);
+
+  useEffect(() => {
+    fetchNearProperties({
+      lat: 14,
+      lng: 121,
+      precision: 1,
+    });
+  }, [])
 
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);

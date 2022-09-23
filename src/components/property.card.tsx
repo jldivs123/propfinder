@@ -111,11 +111,11 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
             {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
           </Typography>
         </Box>
-        &nbsp;
+        {/* &nbsp;
         <Typography variant="body2" className="mt-0.5">
           <LocationOnIcon />
           {address}
-        </Typography>
+        </Typography> */}
       </CardContent>
     </Card>
   );

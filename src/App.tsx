@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   margin-top: 64px;
+  background-color: #f1f0f6;
 `;
 
 const AppContainer = styled.div`
