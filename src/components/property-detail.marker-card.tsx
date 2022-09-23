@@ -13,7 +13,7 @@ import {
 } from "../constants";
 
 export const PropertyCard: React.FC<{
-  property: PropertyDetail;
+  property: any;
   lat: number;
   lng: number;
 }> = (props) => {
@@ -22,7 +22,8 @@ export const PropertyCard: React.FC<{
     "latitude",
     `${lat}`
   ).replace("longitude", `${lng}`);
-  const marketPrice = property.selling_price.replace(/ /g, "");
+  console.log(property);
+  const marketPrice = property?.minimumSellingPrice?.replace(/ /g, "");
 
   return (
     <Card sx={{ maxWidth: 345, cursor: "pointer", minwidth: 345 }}>
@@ -45,7 +46,7 @@ export const PropertyCard: React.FC<{
           color="text.secondary"
           sx={{ textTransform: "uppercase" }}
         >
-          {property.address}
+          {property.rawAddress}
         </Typography>
       </CardContent>
       <CardActions>

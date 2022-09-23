@@ -156,10 +156,8 @@ const MapPage = () => {
   } = getNearestProperties();
   const debouncedNearProperties = useDebounce(nearestProperties, 500);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
-    null
-  );
-  const [activeProperty, setActiveProperty] = useState<GeoJSON | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [activeProperty, setActiveProperty] = useState<any | null>(null);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -196,7 +194,7 @@ const MapPage = () => {
       lng: 121,
       precision: 1,
     });
-  }, [])
+  }, []);
 
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);
@@ -249,27 +247,6 @@ const MapPage = () => {
               ? (debouncedNearProperties as any).results
               : [],
             activeProperty
-          )}
-          {isPropertyModalActive && selectedProperty && (
-            <StyledPopup
-              anchor="bottom"
-              closeOnClick={true}
-              onClose={() => {
-                setIsPropertyDrawerActive(!isPropertyModalActive);
-              }}
-              latitude={
-                +selectedProperty?.geometry.coordinates[1] ?? +MANILA_LATITUDE
-              }
-              longitude={
-                +selectedProperty?.geometry.coordinates[0] ?? +MANILA_LONGITUDE
-              }
-            >
-              <PropertyCard
-                property={selectedProperty.properties}
-                lat={selectedProperty.geometry.coordinates[1]}
-                lng={selectedProperty.geometry.coordinates[0]}
-              />
-            </StyledPopup>
           )}
         </MapComponent>
       </MapContainer>
