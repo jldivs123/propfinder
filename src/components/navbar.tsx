@@ -48,11 +48,13 @@ const ResponsiveAppBar = () => {
   return (
     <AppBar
       position="fixed"
-      elevation={1}
+      elevation={0}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: (theme) => "#FFF",
+        backgroundColor: (theme) => "#FFF", 
+        filter:
+        "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
       }}
       className="h-16"
     >
