@@ -71,7 +71,7 @@ const ResponsiveAppBar = () => {
       }}
       className="h-16"
     >
-      <Container maxWidth="xl">
+      <Container>
         <Toolbar>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -123,11 +123,17 @@ const ResponsiveAppBar = () => {
               flexGrow: 1,
               width: "36px",
               height: "36px",
-              display: { xs: "none", md: "block", color: "black" },
+              display: { xs: "block", md: "block", color: "black" },
             }}
           >
             <Button onClick={goToHome} style={{ marginTop: "-5px" }}>
-              <StyledImg src={logo} alt="Homer-logo" />
+              <Typography
+                variant="h4"
+                fontWeight="800"
+                sx={{ textTransform: "lowercase" }}
+              >
+                homer.
+              </Typography>
             </Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
