@@ -30,11 +30,11 @@ export function HomePage() {
         >
           <Grid item lg={6} md={6} sm={12} xs={12}>
             <Typography variant="h1" fontWeight="bold">
-              Finding home shouldn't be hard.
+              Finding a home shouldn't be hard.
             </Typography>
             <Button variant="contained" disableElevation onClick={handleClick}>
-              <Typography variant="h6" fontWeight="bold">
-                Start looking
+              <Typography variant="h6" fontWeight="800">
+                Start looking.
               </Typography>
             </Button>
           </Grid>

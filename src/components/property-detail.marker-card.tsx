@@ -9,7 +9,7 @@ import Link from "@mui/material/Link";
 import {
   PropertyDetail,
   GOOGLE_STREETVIEW_URL,
-  DUMMY_IMAGE,
+  MISSING_PROPERTY_IMG,
 } from "../constants";
 
 export const PropertyCard: React.FC<{
@@ -31,7 +31,7 @@ export const PropertyCard: React.FC<{
         component="img"
         alt="Property image"
         height="140"
-        image={DUMMY_IMAGE}
+        image={MISSING_PROPERTY_IMG}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">

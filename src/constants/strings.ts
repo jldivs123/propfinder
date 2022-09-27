@@ -5,8 +5,7 @@ export const GOOGLE_STREETVIEW_URL = `https://maps.google.com/maps?q=&layer=c&cb
 
 export const MANILA_LATITUDE = `14.5995`;
 export const MANILA_LONGITUDE = `120.9842`;
-export const DUMMY_IMAGE =
-  "https://a0.muscache.com/im/pictures/miso/Hosting-48272746/original/2b342ad1-dfe8-44d9-93cb-6256fd3ab8f8.jpeg?im_w=960";
+export const MISSING_PROPERTY_IMG = "/undraw_for_sale_re_egkk.svg";
 
 export const THEME_COLORS = {
   BLUE: "#667FF8",

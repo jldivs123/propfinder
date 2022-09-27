@@ -4,15 +4,10 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import CardActions from "@mui/material/CardActions";
 import Typography from "@mui/material/Typography";
-import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { FcHome } from "react-icons/fc";
 
-import { GeoJSON, DUMMY_IMAGE, PropertyDetail } from "../constants";
+import { MISSING_PROPERTY_IMG } from "../constants";
 
 interface IPropertyDetailCard {
   type: string;
@@ -31,11 +26,21 @@ function CardImagePlaceholder() {
   // * https://dev.to/franciscomendes10866/how-to-create-modern-cards-using-react-and-tailwind-2ded
   return (
     <div
-      className="flex flex-col justify-center items-center bg-gradient-to-t m-auto my-2 rounded-2xl mx-auto my-2.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-48"
+      className="flex flex-col justify-center items-center bg-gradient-to-t m-auto my-2 rounded-2xl mx-auto my-2.5 h-48"
       style={{ width: "94%" }}
     >
-      <FcHome className="h-24 w-24" />
-      <Typography className="text-white">No image available.</Typography>
+      <CardMedia
+        component="img"
+        image={MISSING_PROPERTY_IMG}
+        alt="Property image"
+        className="h-100 w-100"
+        sx={{
+          width: "100%",
+        }}
+      />
+      <Typography className="text-white" color="primary">
+        No image available.
+      </Typography>
     </div>
   );
 }
@@ -75,12 +80,11 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       {imgUrls && (
         <CardMedia
           component="img"
-          image={DUMMY_IMAGE}
+          image={MISSING_PROPERTY_IMG}
           alt="Property image"
           sx={{
             width: "94%",
           }}
-          className="rounded-2xl mx-auto my-2.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
         />
       )}
       <CardContent sx={{ flex: "1 0 auto" }}>
@@ -111,11 +115,6 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
             {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
           </Typography>
         </Box>
-        {/* &nbsp;
-        <Typography variant="body2" className="mt-0.5">
-          <LocationOnIcon />
-          {address}
-        </Typography> */}
       </CardContent>
     </Card>
   );

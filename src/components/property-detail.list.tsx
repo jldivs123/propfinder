@@ -1,6 +1,6 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
 
 import { PropertyDetailCard } from "../components";
 
@@ -15,9 +15,11 @@ export const PropertyList: React.FC<{
     navigate("/properties/" + propertyId, { state: property });
   };
   return (
-    <Box
-      className="flex flex-row grow flex-wrap pt-3 h-full overflow-y-scroll w-full pl-5
-    pb-5 content-between justify-between"
+    <Grid
+      container
+      columnSpacing={2}
+      rowSpacing={2}
+      className="flex flex-row grow overflow-hidden p-4"
     >
       {properties.map((property: any, index: number) => {
         const propertyData = property.geojson.properties;
@@ -26,7 +28,11 @@ export const PropertyList: React.FC<{
           ...propertyData,
         };
         return (
-          <Box
+          <Grid
+            item
+            sm={12}
+            md={6}
+            lg={6}
             key={`${propertyData.address}-${index}`}
             className="flex w-1/2 my-2.5"
             onMouseEnter={() => onHover(property)}
@@ -36,9 +42,9 @@ export const PropertyList: React.FC<{
               onClick={() => visitProperty(props.address, property)}
               {...props}
             />
-          </Box>
+          </Grid>
         );
       })}
-    </Box>
+    </Grid>
   );
 };
