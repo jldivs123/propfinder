@@ -7,7 +7,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Typography from "@mui/material/Typography";
 
-import { PropertyFilter, PropertyCard, PropertyList } from "../components";
+import { PropertyFilter, PropertyList } from "../components";
 import {
   MAPBOX_PUBLIC_TOKEN,
   MANILA_LATITUDE,
@@ -22,11 +22,6 @@ export interface Coordinates {
   lat: number;
   lng: number;
 }
-
-const StyledPopup = styled(Popup)`
-  border: 2px solid red;
-`;
-
 export const getUserAddress = (
   position: any,
   setUserPositionCallback: (position: Coordinates) => void

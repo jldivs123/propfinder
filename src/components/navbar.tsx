@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef, useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -22,10 +22,24 @@ const StyledImg = styled.img`
 `;
 
 const ResponsiveAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const appBarRef = useRef<any>(null);
   const logo = "/HomeFinder.png";
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.onscroll = function () {
+      if (appBarRef.current) {
+        if (window.pageYOffset !== 0) {
+          appBarRef.current.style.boxShadow =
+            "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)";
+        } else {
+          appBarRef.current.style.boxShadow = "none";
+        }
+      }
+    };
+  }, []);
 
   const goToHome = () => {
     navigate("/");
@@ -49,12 +63,11 @@ const ResponsiveAppBar = () => {
     <AppBar
       position="fixed"
       elevation={0}
+      ref={appBarRef}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: (theme) => "#FFF", 
-        filter:
-        "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
+        backgroundColor: (theme) => "#FFF",
       }}
       className="h-16"
     >

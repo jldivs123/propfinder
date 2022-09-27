@@ -1,384 +1,373 @@
-import Box from "@mui/material/Box";
+import { ReactNode } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
-import { Divider } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import FaceIcon from "@mui/icons-material/Face";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import SchoolIcon from "@mui/icons-material/School";
-import ReactMap, { Marker } from "react-map-gl";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 
-import {
-  MAPBOX_PUBLIC_TOKEN,
-  MANILA_LATITUDE,
-  MANILA_LONGITUDE,
-  PropertyDetail,
-  GOOGLE_STREETVIEW_URL,
-} from "../../constants";
-import { PropertySpec, ImageObj } from "./elements";
-
-import { TrimString } from "../../utils";
-
-const FEATURES = [
-  { name: "Bedrooms", value: 6, reverse: true },
-  { name: "Price per sqm", value: 14000, reverse: true },
-  { name: "Bathrooms", value: 2, reverse: true },
-  { name: "Lot size", value: "146sqm", reverse: true },
-  { name: "Floor size", value: "120sqm", reverse: true },
-  { name: "Type", value: "Row House", reverse: true },
-  { name: "City", value: "Manila", reverse: true },
-];
-
-const virtualTour = () => {
-  const coordinates = GOOGLE_STREETVIEW_URL.replace(
-    `latitude`,
-    `14.5700789`
-  ).replace(`longitude`, `121.0466021`);
-  window.open(coordinates);
-};
-
-export const Property = (propertyDetails: PropertyDetail) => {
+export function DetailHeader(property: any) {
+  // * Check this link out for tiled images: https://github.com/christikaes/react-image-masonry
   const {
-    address,
-    selling_price: price,
-    type: propertyType,
-    lot_area: lotArea,
-    floor_area: floorArea,
-    title_number: titleNumber,
-    appraisal_date: appraisalDate,
-    remarks,
-  } = propertyDetails;
-  console.log(lotArea);
+    property: {
+      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+    } = null,
+  } = property;
+
   return (
-    <Box
+    <Card
+      className="rounded-2xl bg-white"
       sx={{
-        display: "flex",
-        padding: "24px 0",
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: 1000,
-          flexGrow: { sm: 1, md: 2, lg: 2 },
-          width: "auto",
-
-          paddingRight: "10px",
-        }}
-      >
-        {/* TODO
-        
-        1, Address and property specs
-        2. Offeror
-        3. Property short description
-        4. Features & Amenities
-        5. Map
-        6. Estimated Cost
-        7. Near establishments
-        */}
-        <Box
+      <CardMedia
+        component="img"
+        height="240"
+        sx={{ maxHeight: "480px" }}
+        className=""
+        image="https://images.unsplash.com/photo-1630699144867-37acec97df5a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+        alt="green iguana"
+      />
+      <CardContent>
+        <Typography
+          gutterBottom
+          variant="h4"
+          component="div"
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            fontWeight: "bold",
+            background: "-webkit-linear-gradient(45deg, #ec407a, #6a1b9a)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
           }}
         >
-          <Typography>{propertyType}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {address}
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              paddingRight: "24px",
-              margin: "24px 0",
-            }}
-          >
-            {PropertySpec({ title: "Bed", value: 2 })}
-            {PropertySpec({ title: "Bathroom", value: 2 })}
-            {PropertySpec({
-              title: "Lot Size",
-              value: TrimString(lotArea) + "sqm",
-            })}
-            {PropertySpec({
-              title: "Floor size",
-              value: floorArea ? +TrimString(floorArea) + "sqm" : "NA",
-            })}
-          </Box>
-        </Box>
-        <Divider />
-        <Box></Box>
-        <Divider />
-        <Box
-          sx={{
-            margin: "12px 0",
-          }}
+          {type}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: "1rem" }}
         >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            About this home
-          </Typography>
-          <Typography>
-            Cozy Room in Boracay for just sa minute away from the Beach. Work in
-            paradise book our place to experience the island life.
-          </Typography>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            margin: "12px 0",
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Offer Details
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexGrow: 1,
-
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "45%",
-                margin: "5px",
-                padding: "5px",
-              }}
-            >
-              <CalendarTodayIcon
-                sx={{
-                  marginRight: "5px",
-                  width: 46,
-                  height: 46,
-                }}
-              />
-              {PropertySpec({
-                title: "Listing Date",
-                value: "March 14, 2022",
-                reverse: true,
-              })}
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "45%",
-                margin: "5px",
-                padding: "5px",
-              }}
-            >
-              <FaceIcon
-                sx={{
-                  marginRight: "5px",
-                  width: 46,
-                  height: 46,
-                }}
-              />
-              {PropertySpec({
-                title: "Listed by",
-                value: "Juan Dela Cruz",
-                reverse: true,
-              })}
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "45%",
-                margin: "5px",
-                padding: "5px",
-              }}
-            >
-              <CheckCircleOutlineIcon
-                sx={{
-                  marginRight: "5px",
-                  width: 46,
-                  height: 46,
-                }}
-              />
-              {PropertySpec({
-                title: "Remarks",
-                value: "Unoccupied",
-                reverse: true,
-              })}
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "45%",
-                margin: "5px",
-                padding: "5px",
-              }}
-            >
-              <ErrorOutlineIcon
-                sx={{
-                  marginRight: "5px",
-                  width: 46,
-                  height: 46,
-                }}
-              />
-              {PropertySpec({
-                title: "Status",
-                value: "Active",
-                reverse: true,
-              })}
-            </Box>
-          </Box>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            margin: "12px 0",
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Facts & Features
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-            }}
-          >
-            {FEATURES.map((feature: any) => {
-              const { name: title, value, reverse } = feature;
-              return (
-                <Box sx={{ width: "30%", margin: "10px" }}>
-                  {PropertySpec({ title, value, reverse })}
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            margin: "12px 0",
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Location
-          </Typography>
-          <Box
-            sx={{
-              maxHeight: 300,
-              margin: "10px 0",
-            }}
-          >
-            <ReactMap
-              initialViewState={{
-                longitude: +MANILA_LONGITUDE,
-                latitude: +MANILA_LATITUDE,
-                zoom: 10,
-              }}
-              style={{ width: "100%", height: "300px" }}
-              mapStyle="mapbox://styles/mapbox/dark-v10"
-              mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-            >
-              <Marker
-                key={"markerSampleKey"}
-                latitude={+MANILA_LATITUDE}
-                longitude={+MANILA_LONGITUDE}
-              >
-                <img
-                  src={"/Home_4.png"}
-                  onClick={() => {
-                    console.log("Clicked");
-                  }}
-                />
-              </Marker>
-            </ReactMap>
-          </Box>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            margin: "12px 0",
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Nearby Establishments
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexGrow: 1,
-
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "45%",
-                margin: "5px",
-                padding: "5px",
-              }}
-            >
-              <SchoolIcon
-                sx={{
-                  marginRight: "5px",
-                  width: 46,
-                  height: 46,
-                }}
-              />
-              {PropertySpec({
-                title: "Schools",
-                value: "McKinley High",
-                reverse: true,
-              })}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: { sm: "none", md: "flex" },
-          borderRadius: "16px",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 0,
-          minWidth: 275,
-          height: "auto",
-          maxHeight: 250,
-          position: "sticky",
-          top: 84,
-          padding: "24px",
-          elevation: 2,
-          boxShadow: 3,
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            margin: "10px 0",
-          }}
-        >
-          {PropertySpec({ title: "Listing Price", value: price })}
-          {PropertySpec({
-            title: "Title no.",
-            value: TrimString(titleNumber),
-          })}
-        </Box>
-        <Button variant="outlined">Start an offer</Button>
-        <Button variant="contained">Take a tour</Button>
-        <Button variant="contained" onClick={virtualTour}>
-          Virtual tour
-        </Button>
-      </Box>
-    </Box>
+          {rawAddress}
+        </Typography>
+      </CardContent>
+    </Card>
   );
-};
+}
+
+export function DetailSummary(property: any) {
+  const {
+    property: {
+      geojson: {
+        properties: {
+          minimumSellingPrice,
+          lotArea = "N/A",
+          floorArea = "N/A",
+          titleCode = "N/A",
+          tctStatus = "N/A",
+          remark = "N/A",
+        } = null,
+      } = null,
+    } = null,
+  } = property;
+
+  return (
+    <Card
+      sx={{
+        minWidth: 275,
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
+      }}
+    >
+      <CardContent>
+        <Grid container rowSpacing={1} columnSpacing={{ lg: 2 }}>
+          <Grid item xs={12} lg={12}>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                fontWeight: "bold",
+                background: "-webkit-linear-gradient(45deg, #c22ed0, #5ffae0)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              About this property:
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Base Price
+            </Typography>
+            <Typography variant="h6" component="div">
+              {minimumSellingPrice}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Title number
+            </Typography>
+            <Typography variant="h6" component="div">
+              {titleCode}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Floor Area
+            </Typography>
+            <Typography variant="h6" component="div">
+              {+floorArea ? `${floorArea}sq/m` : floorArea}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Lot Area
+            </Typography>
+            <Typography variant="h6" component="div">
+              {+lotArea ? `${lotArea}sq/m` : lotArea}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Remarks
+            </Typography>
+            <Typography variant="h6" component="div">
+              {remark}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography
+              sx={{ fontSize: "1rem" }}
+              color="text.secondary"
+              gutterBottom
+            >
+              TCT Status
+            </Typography>
+            <Typography variant="h6" component="div">
+              {tctStatus}
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function DetailDescription(property: any) {
+  const {
+    property: {
+      geojson: { properties: { description = "N/A" } = null } = null,
+    } = null,
+  } = property;
+
+  return (
+    <Card
+      sx={{
+        minWidth: 275,
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
+      }}
+    >
+      <CardContent>
+        <Grid container rowSpacing={1} columnSpacing={{ lg: 2 }}>
+          <Grid item xs={12} lg={12}>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                fontWeight: "bold",
+                background: "-webkit-linear-gradient(45deg, #0ccda3, #c1fcd3)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Description:
+            </Typography>
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: "1rem" }}
+            >
+              {description !== "N/A"
+                ? description
+                : `PAG-IBIG FUND RESERVES THE RIGHT TO REJECT ANY OR ALL BIDS, TO WAIVE ANY FORMALITY THEREIN OR ACCEPT SUCH BIDS AS MAY BE CONSIDERED MOST ADVANTAGEOUS TO THE FUND. THE DECISION OF THE FUND IS FINAL AND BINDING`}
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function DetailMap(property: any) {
+  const {
+    property: {
+      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+    } = null,
+  } = property;
+
+  return (
+    <Card
+      sx={{
+        minWidth: 275,
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
+      }}
+      className="shadow-xl"
+    >
+      <CardContent>
+        <iframe
+          width="100%"
+          height="450"
+          loading="lazy"
+          src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
+          &q=Space+Needle,Seattle+WA"
+        ></iframe>
+      </CardContent>
+      <CardActions>
+        <Button variant="contained">View on 3D street map</Button>
+      </CardActions>
+    </Card>
+  );
+}
+
+export function DetailAuthor(property: any) {
+  const {
+    property: {
+      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+    } = null,
+  } = property;
+
+  return (
+    <Card
+      sx={{
+        minWidth: 275,
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
+      }}
+    >
+      <CardContent>
+        <Grid container rowSpacing={1} columnSpacing={{ lg: 2 }}>
+          <Grid item xs={12} lg={12}>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                fontWeight: "bold",
+                background: "-webkit-linear-gradient(45deg, #f9957f, #f2f5d0)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              About the Author
+            </Typography>
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: "1rem" }}
+            >
+              The Home Development Mutual Fund, commonly known as the Pag-IBIG
+              Fund, is a government-owned and controlled corporation under the
+              Department of Human Settlements and Urban Development of the
+              Philippines responsible for the administration of the national
+              savings program and affordable shelter financing for Filipinos
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function DetailAuthorCard(property: any) {
+  const {
+    property: {
+      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+    } = null,
+  } = property;
+
+  return (
+    <Card
+      sx={{
+        maxWidth: 345,
+        borderRadius: "12px",
+        backgroundColor: "white",
+        boxShadow:
+          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);",
+      }}
+    >
+      <CardMedia
+        component="img"
+        height="140"
+        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN3WYPb9P3tVFFr4UQjNPMxB6jEg2BJC4KbjhHY43pOw&s"
+        alt="green iguana"
+      />
+      <CardContent>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          sx={{
+            fontWeight: "bold",
+            background: "-webkit-linear-gradient(45deg, #a3c9e2, #9618f7)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Author: PAG-IBIG
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: "1rem" }}
+        >
+          The Home Development Mutual Fund, commonly known as the Pag-IBIG Fund,
+          is a government-owned and controlled corporation under the Department
+          of Human Settlements and Urban Development of the Philippines
+          responsible for the administration of the national savings program and
+          affordable shelter financing for Filipinos
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small">Share</Button>
+        <Button size="small">Learn More</Button>
+      </CardActions>
+    </Card>
+  );
+}

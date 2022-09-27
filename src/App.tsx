@@ -5,8 +5,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 // * Components
-import { MapPage, PropertyDetailPage } from "./pages";
-import { ResponsiveAppBar } from "./components";
+import { MapPage, PropertyDetailPage, HomePage } from "./pages";
+import { ResponsiveAppBar, Footer } from "./components";
 
 import { ScreenSizeContextProvider } from "./utils";
 import "./App.css";
@@ -17,20 +17,23 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   margin-top: 64px;
-  background-color: #f1f0f6;
+  flex-grow: 3;
 `;
 
 const AppContainer = styled.div`
   margin: 0;
   padding: 0;
   width: 100%;
+  min-height: 100vh;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const lightTheme = createTheme({
   palette: {
     primary: {
-      main: "#0B0F58",
+      main: "#6c63ff",
       light: "#0B0F58",
     },
     secondary: {
@@ -64,7 +67,10 @@ function App() {
             <ResponsiveAppBar />
             <Wrapper className="grow">
               <Routes>
-                <Route path="/" element={<MapPage />}>
+                <Route path="/" element={<HomePage />}>
+                  Home
+                </Route>
+                <Route path="/map" element={<MapPage />}>
                   Map
                 </Route>
                 <Route path="/properties/:id" element={<PropertyDetailPage />}>
@@ -73,6 +79,7 @@ function App() {
                 {/* <Route path="/">Home</Route> */}
               </Routes>
             </Wrapper>
+            <Footer />
           </AppContainer>
         </BrowserRouter>
       </ThemeProvider>

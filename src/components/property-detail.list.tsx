@@ -33,7 +33,7 @@ export const PropertyList: React.FC<{
             onMouseLeave={() => onHover(null)}
           >
             <PropertyDetailCard
-              onClick={() => visitProperty(props.address, propertyData)}
+              onClick={() => visitProperty(props.address, property)}
               {...props}
             />
           </Box>
