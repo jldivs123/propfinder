@@ -6,8 +6,6 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
 import {
-  ImageObj,
-  ImageListComponent,
   DetailHeader,
   DetailAuthor,
   DetailMap,
@@ -31,7 +29,7 @@ export const PropertyDetailPage = () => {
 
   return (
     <Wrapper>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className="py-2">
         <Box sx={{ flexGrow: 1 }}>
           <Grid
             container
@@ -42,35 +40,28 @@ export const PropertyDetailPage = () => {
             <Grid item xs={12} lg={12}>
               <DetailHeader property={property} />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              lg={12}
-              container
-              className=""
-              rowSpacing={3}
-              columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-            >
-              <Grid item xs={8}>
+            <Grid item xs={12} lg={12} container className="" spacing={2}>
+              <Grid item xs={8} lg={8}>
                 <Grid
                   item
-                  xs={6}
-                  lg={6}
+                  xs={12}
+                  lg={12}
                   container
                   className="position-relative max-w-100"
-                  rowSpacing={3}
-                  columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+                  spacing={2}
                 >
-                  <Grid item xs={12}>
+                  <Grid item lg={12} xs={12}>
                     <DetailSummary property={property} />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item lg={12} xs={12}>
                     <DetailDescription property={property} />
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <DetailAuthorCard property={property} />
+              <Grid item xs={4} lg={4} sx={{ position: "relative" }}>
+                <Box sx={{ position: "sticky", top: "5rem" }}>
+                  <DetailAuthorCard property={property} />
+                </Box>
               </Grid>
             </Grid>
             <Grid item xs={12}>

@@ -207,10 +207,10 @@ const MapPage = () => {
         {/* <Toolbar /> */}
         {isFetchingNearProperties && (
           <Puff
-            height="80"
-            width="80"
+            height="5rem"
+            width="5rem"
             radius={1}
-            color="#000"
+            color="#6c63ff"
             ariaLabel="puff-loading"
             wrapperStyle={{}}
             wrapperClass="m-auto my-2"
