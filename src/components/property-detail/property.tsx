@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -6,6 +6,12 @@ import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import SettingsOverscanIcon from "@mui/icons-material/SettingsOverscan";
+import SellIcon from "@mui/icons-material/Sell";
+import TitleIcon from "@mui/icons-material/Title";
+import CommentIcon from "@mui/icons-material/Comment";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import FmdGoodIcon from "@mui/icons-material/FmdGood";
 
 export function DetailHeader(property: any) {
   // * Check this link out for tiled images: https://github.com/christikaes/react-image-masonry
@@ -44,6 +50,9 @@ export function DetailHeader(property: any) {
           {type}
         </Typography>
         <Typography variant="body2" color="text" sx={{ fontSize: "1.2rem" }}>
+          <span>
+            <FmdGoodIcon fontSize="large" color="primary" />
+          </span>{" "}
           {rawAddress}
         </Typography>
       </CardContent>
@@ -89,77 +98,149 @@ export function DetailSummary(property: any) {
               About this property:
             </Typography>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              Base Price
-            </Typography>
-            <Typography variant="h6" component="div">
-              {minimumSellingPrice}
-            </Typography>
+              <SellIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Base Price
+              </Typography>
+              <Typography variant="h6" component="div">
+                &#8369;{minimumSellingPrice}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              Title number
-            </Typography>
-            <Typography variant="h6" component="div">
-              {titleCode}
-            </Typography>
+              <TitleIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Title number
+              </Typography>
+              <Typography variant="h6" component="div">
+                {titleCode}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              Floor Area
-            </Typography>
-            <Typography variant="h6" component="div">
-              {+floorArea ? `${floorArea}sq/m` : floorArea}
-            </Typography>
+              <OpenInFullIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Floor Area
+              </Typography>
+              <Typography variant="h6" component="div">
+                {+floorArea ? `${floorArea}sq/m` : floorArea}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              Lot Area
-            </Typography>
-            <Typography variant="h6" component="div">
-              {+lotArea ? `${lotArea}sq/m` : lotArea}
-            </Typography>
+              <SettingsOverscanIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Lot Area
+              </Typography>
+              <Typography variant="h6" component="div">
+                {+lotArea ? `${lotArea}sq/m` : lotArea}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              Remarks
-            </Typography>
-            <Typography variant="h6" component="div">
-              {remark}
-            </Typography>
+              <CommentIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Remarks
+              </Typography>
+              <Typography variant="h6" component="div">
+                {remark}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography
-              sx={{ fontSize: "1rem" }}
-              color="text.secondary"
-              gutterBottom
+          <Grid item container xs={6} lg={6}>
+            <Grid
+              item
+              container
+              xs={2}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
             >
-              TCT Status
-            </Typography>
-            <Typography variant="h6" component="div">
-              {tctStatus}
-            </Typography>
+              <CampaignIcon fontSize="large" color="primary" />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                sx={{ fontSize: "1rem" }}
+                color="text.secondary"
+                gutterBottom
+              >
+                TCT Status
+              </Typography>
+              <Typography variant="h6" component="div">
+                {tctStatus}
+              </Typography>
+            </Grid>
           </Grid>
         </Grid>
       </CardContent>
@@ -216,9 +297,13 @@ export function DetailDescription(property: any) {
 export function DetailMap(property: any) {
   const {
     property: {
-      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+      geojson: {
+        properties: { rawAddress = null, type = null } = null,
+        geometry: { coordinates = null } = null,
+      } = null,
     } = null,
   } = property;
+  const location = `${coordinates[1]},${coordinates[0]}`;
 
   return (
     <Card
@@ -248,8 +333,8 @@ export function DetailMap(property: any) {
               width="100%"
               height="450"
               loading="lazy"
-              src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
-          &q=Space+Needle,Seattle+WA"
+              src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
+          &location=${location}`}
             ></iframe>
           </Grid>
           <Grid item xs={12} lg={12}>
