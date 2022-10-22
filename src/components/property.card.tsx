@@ -69,7 +69,8 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
         bgcolor: "#fff",
         borderRadius: "24px",
         cursor: "pointer",
-        maxWidth: 345,
+        maxWidth: "98%",
+        maxHeight: 400,
         boxShadow: "none",
         filter:
           "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",

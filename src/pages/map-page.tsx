@@ -1,21 +1,22 @@
-import styled from "styled-components";
 import { FC, useState, useEffect, useRef } from "react";
-import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
+import ReactMap, { Marker, MapRef } from "react-map-gl";
 import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import { LngLatBounds, LngLat } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import { BottomSheet } from "react-spring-bottom-sheet";
 
 import { PropertyFilter, PropertyList } from "../components";
 import {
   MAPBOX_PUBLIC_TOKEN,
   MANILA_LATITUDE,
-  GeoJSON,
   MANILA_LONGITUDE,
 } from "../constants";
 import { useDebounce } from "../utils/hooks";
-import { calculateGeohashPrecision } from "../utils";
+import { calculateGeohashPrecision, useScreenSize } from "../utils";
 import { getNearestProperties } from "../lib/apis";
 
 export interface Coordinates {
@@ -32,7 +33,6 @@ export const getUserAddress = (
   });
 };
 
-const MapContainer = styled.div``;
 // * https://github.com/visgl/react-map-gl/issues/750
 const Markers = (
   onClick: (args: any) => any,
@@ -124,10 +124,8 @@ const MapComponent: FC<
       ref={mapRef}
       onMove={(e: any) => stateHandler(e.viewState)}
       style={{
-        width: "63%",
+        maxWidth: "100%",
         minHeight: "100px",
-        height: "calc(100% - 64px)",
-        position: "fixed",
         flexGrow: "1",
       }}
       mapStyle="mapbox://styles/mapbox/light-v10"
@@ -161,6 +159,7 @@ const MapPage = () => {
     timeout: 5000,
     maximumAge: 0,
   };
+  const display = useScreenSize();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -202,49 +201,131 @@ const MapPage = () => {
   };
 
   return (
-    <div className="flex mx-0 w-full h-max min-h-screen">
-      <PropertyFilter>
-        {/* <Toolbar /> */}
-        {isFetchingNearProperties && (
-          <Puff
-            height="5rem"
-            width="5rem"
-            radius={1}
-            color="#6c63ff"
-            ariaLabel="puff-loading"
-            wrapperStyle={{}}
-            wrapperClass="m-auto my-2"
-            visible={true}
-          />
-        )}{" "}
-        {!isFetchingNearProperties && (
-          <PropertyList
-            properties={
-              (debouncedNearProperties as any)
-                ? (debouncedNearProperties as any).results
-                : []
-            }
-            onHover={onPropertyHover}
-          />
-        )}
-      </PropertyFilter>
-      <MapContainer className="relative w-2/3 h-100 flex">
-        <MapComponent
-          lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
-          lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
-          viewStateHandler={(viewStateEventPayload) =>
-            setViewState(viewStateEventPayload)
-          }
+    <div className="flex w-100 h-100 flex-wrap flex-column grow flex-col relative">
+      <Grid
+        item
+        container
+        rowSpacing={2}
+        direction={{
+          xs: "column-reverse",
+          sm: "column-reverse",
+          md: "column-reverse",
+          lg: "row",
+        }}
+        sx={{
+          position: "relative",
+          height: {
+            lg: "100%",
+            md: "100%",
+            sm: "80%",
+          },
+          flexGrow: 1,
+          width: "100%",
+        }}
+      >
+        <Grid item lg={4} sx={{ display: { sm: "none", md: "flex" } }}>
+          <PropertyFilter>
+            {/* <Toolbar /> */}
+            {isFetchingNearProperties && (
+              <Puff
+                height="5rem"
+                width="5rem"
+                radius={1}
+                color="#6c63ff"
+                ariaLabel="puff-loading"
+                wrapperStyle={{}}
+                wrapperClass="m-auto my-2"
+                visible={true}
+              />
+            )}{" "}
+            {!isFetchingNearProperties && (
+              <PropertyList
+                properties={
+                  (debouncedNearProperties as any)
+                    ? (debouncedNearProperties as any).results
+                    : []
+                }
+                onHover={onPropertyHover}
+              />
+            )}
+          </PropertyFilter>
+        </Grid>
+        <Grid
+          item
+          lg={8}
+          sm={12}
+          sx={{
+            height: { lg: "100%", md: "80%", sm: "80%" },
+            flexGrow: 1,
+          }}
         >
-          {Markers(
-            openPropertyDetails,
-            (debouncedNearProperties as any)
-              ? (debouncedNearProperties as any).results
-              : [],
-            activeProperty
-          )}
-        </MapComponent>
-      </MapContainer>
+          <Box
+            sx={{
+              height: "calc(100vh - 4rem)",
+              minHeight: "calc(100vh - 4rem)",
+              width: { md: "100%" },
+              position: { lg: "sticky", md: "sticky", sm: "relative" },
+              top: { sm: 0, md: "4rem", lg: "4rem" },
+              contain: "paint layout",
+            }}
+          >
+            <MapComponent
+              lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
+              lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
+              viewStateHandler={(viewStateEventPayload) =>
+                setViewState(viewStateEventPayload)
+              }
+            >
+              {Markers(
+                openPropertyDetails,
+                (debouncedNearProperties as any)
+                  ? (debouncedNearProperties as any).results
+                  : [],
+                activeProperty
+              )}
+            </MapComponent>
+          </Box>
+        </Grid>
+      </Grid>
+      <Box sx={{ display: { sm: "block", md: "none", lg: "none" } }}>
+        <BottomSheet
+          open={display.SM}
+          blocking={false}
+          skipInitialTransition
+          defaultSnap={({ maxHeight }: { maxHeight: number }) => maxHeight / 2}
+          snapPoints={({ maxHeight }: { maxHeight: number }) => [
+            maxHeight - maxHeight / 10,
+            maxHeight / 4,
+            maxHeight * 0.6,
+          ]}
+          expandOnContentDrag
+        >
+          <Box className="flex justify-center py-5">
+            {isFetchingNearProperties && (
+              <Puff
+                height="5rem"
+                width="5rem"
+                radius={1}
+                color="#6c63ff"
+                ariaLabel="puff-loading"
+                wrapperStyle={{}}
+                wrapperClass="w-100 flex justify-center items-center"
+                visible={true}
+              />
+            )}{" "}
+            {!isFetchingNearProperties && (
+              <PropertyList
+                properties={
+                  (debouncedNearProperties as any)
+                    ? (debouncedNearProperties as any).results
+                    : []
+                }
+                onHover={onPropertyHover}
+              />
+            )}
+          </Box>
+        </BottomSheet>
+      </Box>
     </div>
   );
 };

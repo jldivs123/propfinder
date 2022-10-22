@@ -53,7 +53,7 @@ const useScreenSize = () => {
 
   return Object.entries(BREAKPOINTS).reduce((accumulator, [size, value]) => {
     accumulator[size] =
-      size === "LG" ? dimension.width >= value : dimension.width < value;
+      size === "XL" ? dimension.width >= value : dimension.width < value;
     accumulator.width = dimension.width;
     accumulator.height = dimension.height;
     return accumulator;
