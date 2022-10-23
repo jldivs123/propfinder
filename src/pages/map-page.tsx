@@ -208,7 +208,7 @@ const MapPage = () => {
         item
         container
         rowSpacing={{ lg: 2 }}
-        columns={{ xs: 12, sm: 12, md: 12, lg:12 }}
+        columns={{ xs: 12, sm: 12, md: 12, lg: 12 }}
         direction={{
           xs: "column-reverse",
           sm: "column-reverse",
@@ -235,7 +235,7 @@ const MapPage = () => {
                 radius={1}
                 color="#6c63ff"
                 ariaLabel="puff-loading"
-                wrapperStyle={{ marginTop: "auto"}}
+                wrapperStyle={{ marginTop: "50%" }}
                 wrapperClass="m-auto my-2"
                 visible={true}
               />
@@ -260,7 +260,7 @@ const MapPage = () => {
           sx={{
             height: { lg: "100%", md: "100%", sm: "100%" },
             flexGrow: 1,
-            display: "flex"
+            display: "flex",
           }}
         >
           <Box

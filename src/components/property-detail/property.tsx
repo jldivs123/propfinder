@@ -98,7 +98,7 @@ export function DetailSummary(property: any) {
               About this property:
             </Typography>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container
@@ -122,7 +122,7 @@ export function DetailSummary(property: any) {
               </Typography>
             </Grid>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container
@@ -146,7 +146,7 @@ export function DetailSummary(property: any) {
               </Typography>
             </Grid>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container
@@ -170,7 +170,7 @@ export function DetailSummary(property: any) {
               </Typography>
             </Grid>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container
@@ -194,7 +194,7 @@ export function DetailSummary(property: any) {
               </Typography>
             </Grid>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container
@@ -218,7 +218,7 @@ export function DetailSummary(property: any) {
               </Typography>
             </Grid>
           </Grid>
-          <Grid item container xs={6} lg={6}>
+          <Grid item container xs={12} md={6}>
             <Grid
               item
               container

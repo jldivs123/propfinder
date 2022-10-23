@@ -21,7 +21,7 @@ export const PropertyList: React.FC<{
       columns={{ xs: 4, sm: 4, md: 12, lg: 12 }}
       className="grow"
       justifyContent="center"
-      
+      sx={{ padding: "2rem" }}
     >
       {properties.map((property: any, index: number) => {
         const propertyData = property.geojson.properties;

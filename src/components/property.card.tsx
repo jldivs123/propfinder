@@ -5,7 +5,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { FcHome } from "react-icons/fc";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import CardActions from "@mui/material/CardActions";
+import IconButton from "@mui/material/IconButton";
+import CardHeader from "@mui/material/CardHeader";
 
 import { MISSING_PROPERTY_IMG } from "../constants";
 
@@ -22,12 +25,12 @@ interface IPropertyDetailCard {
   onHover?: () => void;
 }
 
-function CardImagePlaceholder() {
+function CardImagePlaceholder(onClick?: () => void) {
   // * https://dev.to/franciscomendes10866/how-to-create-modern-cards-using-react-and-tailwind-2ded
   return (
     <div
       className="flex flex-col justify-center items-center bg-gradient-to-t m-auto my-2 rounded-2xl mx-auto my-2.5 h-48"
-      style={{ width: "94%" }}
+      style={{ width: "94%", cursor: "pointer" }}
     >
       <CardMedia
         component="img"
@@ -61,17 +64,17 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
   } = props;
   const formattedPrice = price.replace(/ /g, "");
 
-  return (  
+  return (
     <Card
       onClick={onClick}
       onMouseEnter={onHover}
       sx={{
         bgcolor: "#fff",
         borderRadius: "24px",
-        cursor: "pointer",
         maxWidth: "98%",
-        minWidth: "45%", 
+        minWidth: "45%",
         maxHeight: 400,
+        position: "relative",
         border: "2px solid",
         boxShadow: "none",
         filter:
@@ -79,14 +82,19 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       }}
       className="h-full w-80 group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >
-      {!imgUrls && CardImagePlaceholder()}
+      <IconButton onClick={() => console.log('asdas')} aria-label="settings" sx={{ position: "absolute", top: 5, right: 5, zIndex: 5 }}>
+        <FavoriteIcon color="secondary" />
+      </IconButton>
+      {!imgUrls && CardImagePlaceholder(onClick)}
       {imgUrls && (
         <CardMedia
           component="img"
           image={MISSING_PROPERTY_IMG}
           alt="Property image"
+          onClick={onClick}
           sx={{
             width: "94%",
+            cursor: "pointer",
           }}
         />
       )}
@@ -113,7 +121,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
           >
             {floorArea && floorArea > 0
               ? `Floor area: ${floorArea} sq/m`
-              : "N/A"}{" "}
+              : "Floor area: N/A"}{" "}
             &#183;
             {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
           </Typography>

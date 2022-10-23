@@ -37,11 +37,11 @@ export const PropertyDetailPage = () => {
             rowSpacing={3}
             columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
           >
-            <Grid item xs={12} lg={12}>
+            <Grid item xs={12} md={12}>
               <DetailHeader property={property} />
             </Grid>
-            <Grid item xs={12} lg={12} container className="" spacing={2}>
-              <Grid item xs={8} lg={8}>
+            <Grid item xs={12} md={12} lg={12} container spacing={2}>
+              <Grid item xs={8} md={12} lg={8}>
                 <Grid
                   item
                   xs={12}
@@ -58,7 +58,7 @@ export const PropertyDetailPage = () => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={4} lg={4} sx={{ position: "relative" }}>
+              <Grid item xs={12} md={12} lg={4} sx={{ position: "relative" }}>
                 <Box sx={{ position: "sticky", top: "5rem" }}>
                   <DetailAuthorCard property={property} />
                 </Box>

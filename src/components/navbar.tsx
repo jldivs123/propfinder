@@ -6,13 +6,15 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
+import MdBookmark from "@mui/icons-material/Bookmark";
+import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-const pages = ["Sell", "Buy", "Rent"];
+const pages = ["The Story", "FAQ", "Contacts"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const StyledImg = styled.img`
@@ -67,7 +69,7 @@ const ResponsiveAppBar = () => {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: (theme) => "#FFF",
+        backgroundColor: "#FFF",
       }}
       className="h-16"
     >
@@ -154,6 +156,17 @@ const ResponsiveAppBar = () => {
                 </Typography>
               </Button>
             ))}
+          </Box>
+          <Box sx={{ display: { md: "flex" } }}>
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="secondary">
+                <MdBookmark color="primary" />
+              </Badge>
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>
