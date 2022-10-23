@@ -125,6 +125,8 @@ const MapComponent: FC<
       onMove={(e: any) => stateHandler(e.viewState)}
       style={{
         maxWidth: "100%",
+        width: "100%",
+        minWidth: "100%",
         minHeight: "100px",
         flexGrow: "1",
       }}
@@ -205,12 +207,12 @@ const MapPage = () => {
       <Grid
         item
         container
-        rowSpacing={2}
+        rowSpacing={{ lg: 2 }}
+        columns={{ xs: 12, sm: 12, md: 12, lg:12 }}
         direction={{
           xs: "column-reverse",
           sm: "column-reverse",
-          md: "column-reverse",
-          lg: "row",
+          md: "row",
         }}
         sx={{
           position: "relative",
@@ -223,7 +225,7 @@ const MapPage = () => {
           width: "100%",
         }}
       >
-        <Grid item lg={4} sx={{ display: { sm: "none", md: "flex" } }}>
+        <Grid item md={6} lg={4} sx={{ display: { sm: "none", md: "block" } }}>
           <PropertyFilter>
             {/* <Toolbar /> */}
             {isFetchingNearProperties && (
@@ -233,7 +235,7 @@ const MapPage = () => {
                 radius={1}
                 color="#6c63ff"
                 ariaLabel="puff-loading"
-                wrapperStyle={{}}
+                wrapperStyle={{ marginTop: "auto"}}
                 wrapperClass="m-auto my-2"
                 visible={true}
               />
@@ -253,17 +255,19 @@ const MapPage = () => {
         <Grid
           item
           lg={8}
+          md={6}
           sm={12}
           sx={{
-            height: { lg: "100%", md: "80%", sm: "80%" },
+            height: { lg: "100%", md: "100%", sm: "100%" },
             flexGrow: 1,
+            display: "flex"
           }}
         >
           <Box
             sx={{
               height: "calc(100vh - 4rem)",
               minHeight: "calc(100vh - 4rem)",
-              width: { md: "100%" },
+              width: { md: "100%", lg: "100%", xs: "100%" },
               position: { lg: "sticky", md: "sticky", sm: "relative" },
               top: { sm: 0, md: "4rem", lg: "4rem" },
               contain: "paint layout",
@@ -287,9 +291,9 @@ const MapPage = () => {
           </Box>
         </Grid>
       </Grid>
-      <Box sx={{ display: { sm: "block", md: "none", lg: "none" } }}>
+      <Box sx={{ display: { xs: "block", md: "none", lg: "none" } }}>
         <BottomSheet
-          open={display.SM}
+          open={display.MD}
           blocking={false}
           skipInitialTransition
           defaultSnap={({ maxHeight }: { maxHeight: number }) => maxHeight / 2}
@@ -300,7 +304,7 @@ const MapPage = () => {
           ]}
           expandOnContentDrag
         >
-          <Box className="flex justify-center py-5">
+          <Box className="flex justify-center py-5 item-center">
             {isFetchingNearProperties && (
               <Puff
                 height="5rem"

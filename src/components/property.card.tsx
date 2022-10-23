@@ -61,7 +61,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
   } = props;
   const formattedPrice = price.replace(/ /g, "");
 
-  return (
+  return (  
     <Card
       onClick={onClick}
       onMouseEnter={onHover}
@@ -70,7 +70,9 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
         borderRadius: "24px",
         cursor: "pointer",
         maxWidth: "98%",
+        minWidth: "45%", 
         maxHeight: 400,
+        border: "2px solid",
         boxShadow: "none",
         filter:
           "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",

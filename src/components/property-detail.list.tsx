@@ -18,9 +18,10 @@ export const PropertyList: React.FC<{
     <Grid
       container
       spacing={{ xs: 4, md: 4 }}
-      columns={{ xs: 4, sm: 4, md: 4, lg: 12 }}
+      columns={{ xs: 4, sm: 4, md: 12, lg: 12 }}
       className="grow"
       justifyContent="center"
+      
     >
       {properties.map((property: any, index: number) => {
         const propertyData = property.geojson.properties;
@@ -31,12 +32,13 @@ export const PropertyList: React.FC<{
         return (
           <Grid
             lg={6}
-            md={1}
+            md={6}
             sm={2}
             xs={4}
             item
             container
             justifyContent="center"
+            alignItems="center"
             key={`${propertyData.address}-${index}`}
             onMouseEnter={() => onHover(property)}
             onMouseLeave={() => onHover(null)}
