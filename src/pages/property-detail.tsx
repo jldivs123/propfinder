@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { Puff } from "react-loader-spinner";
 
 import {
   DetailHeader,
@@ -13,6 +15,7 @@ import {
   DetailSummary,
   DetailDescription,
 } from "../components/property-detail";
+import { getProperty } from "../lib/apis";
 
 const Wrapper = styled.div`
   margin: auto;
@@ -23,55 +26,67 @@ const Wrapper = styled.div`
 `;
 
 export const PropertyDetailPage = () => {
-  const { id: address } = useParams();
+  const { id } = useParams();
   const { state } = useLocation();
-  const property = state as any;
+  // const property = state as any;
+  const {
+    response: property,
+    isLoading,
+    invokeApi: getPropertyData,
+  } = getProperty(id ?? "");
+
+  useEffect(() => {
+    getPropertyData();
+  }, [id]);
 
   return (
     <Wrapper>
       <Container maxWidth="lg" className="py-2">
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid
-            container
-            className="w-full w-100 grow"
-            rowSpacing={3}
-            columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-          >
-            <Grid item xs={12} md={12}>
-              <DetailHeader property={property} />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12} container spacing={2}>
-              <Grid item xs={8} md={12} lg={8}>
-                <Grid
-                  item
-                  xs={12}
-                  lg={12}
-                  container
-                  className="position-relative max-w-100"
-                  spacing={2}
-                >
-                  <Grid item lg={12} xs={12}>
-                    <DetailSummary property={property} />
-                  </Grid>
-                  <Grid item lg={12} xs={12}>
-                    <DetailDescription property={property} />
+        {!isLoading && property && (
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid
+              container
+              className="w-full w-100 grow"
+              rowSpacing={3}
+              columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+            >
+              <Grid item xs={12} md={12}>
+                <DetailHeader property={property} />
+              </Grid>
+              <Grid item xs={12} md={12} lg={12} container spacing={2}>
+                <Grid item xs={8} md={12} lg={8}>
+                  <Grid
+                    item
+                    xs={12}
+                    lg={12}
+                    container
+                    className="position-relative max-w-100"
+                    spacing={2}
+                  >
+                    <Grid item lg={12} xs={12}>
+                      <DetailSummary property={property} />
+                    </Grid>
+                    <Grid item lg={12} xs={12}>
+                      <DetailDescription property={property} />
+                    </Grid>
                   </Grid>
                 </Grid>
+                <Grid item xs={12} md={12} lg={4} sx={{ position: "relative" }}>
+                  <Box sx={{ position: "sticky", top: "5rem" }}>
+                    <DetailAuthorCard property={property} />
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={12} lg={4} sx={{ position: "relative" }}>
-                <Box sx={{ position: "sticky", top: "5rem" }}>
-                  <DetailAuthorCard property={property} />
-                </Box>
+              <Grid item xs={12}>
+                <DetailMap property={property} />
+              </Grid>
+              <Grid item xs={12}>
+                <DetailAuthor property={property} />
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <DetailMap property={property} />
-            </Grid>
-            <Grid item xs={12}>
-              <DetailAuthor property={property} />
-            </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        )}
+        {isLoading && <Puff />}
       </Container>
     </Wrapper>
   );

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 
 import { PropertyDetailCard } from "../components";
@@ -9,11 +8,9 @@ export const PropertyList: React.FC<{
   onHover: (property: any) => void;
 }> = (props) => {
   const { properties, onHover } = props;
-  const navigate = useNavigate();
 
-  const visitProperty = (propertyId: string, property: any) => {
-    console.log(properties);
-    navigate("/properties/" + propertyId, { state: property });
+  const visitProperty = (propertyId: string) => {
+    window.open(`/properties/${propertyId}`, "_blank");
   };
   return (
     <Grid
@@ -46,7 +43,7 @@ export const PropertyList: React.FC<{
             sx={{ margin: 0, padding: 0 }}
           >
             <PropertyDetailCard
-              onClick={() => visitProperty(props.pk, property)}
+              onClick={() => visitProperty(property.pk)}
               {...props}
             />
           </Grid>
