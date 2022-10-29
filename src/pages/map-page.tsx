@@ -225,7 +225,13 @@ const MapPage = () => {
           width: "100%",
         }}
       >
-        <Grid item md={6} lg={4} sx={{ display: { sm: "none", md: "block" } }}>
+        <Grid
+          item
+          md={6}
+          lg={6}
+          xl={4}
+          sx={{ display: { sm: "none", md: "block" } }}
+        >
           <PropertyFilter>
             {/* <Toolbar /> */}
             {isFetchingNearProperties && (
@@ -254,8 +260,9 @@ const MapPage = () => {
         </Grid>
         <Grid
           item
-          lg={8}
+          lg={6}
           md={6}
+          xl={8}
           sm={12}
           sx={{
             height: { lg: "100%", md: "100%", sm: "100%" },

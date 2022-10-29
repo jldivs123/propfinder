@@ -15,13 +15,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 const pages = ["The Story", "FAQ", "Contacts"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
-const StyledImg = styled.img`
-  width: 72px; /* or any custom size */
-  height: 32px;
-  object-fit: fill;
-`;
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);

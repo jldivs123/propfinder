@@ -12,6 +12,7 @@ export const PropertyList: React.FC<{
   const navigate = useNavigate();
 
   const visitProperty = (propertyId: string, property: any) => {
+    console.log(properties);
     navigate("/properties/" + propertyId, { state: property });
   };
   return (
