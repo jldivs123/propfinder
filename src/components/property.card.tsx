@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 
 import { MISSING_PROPERTY_IMG } from "../constants";
+import { db } from "./../lib/db";
 
 interface IPropertyDetailCard {
   type: string;
@@ -23,6 +24,7 @@ interface IPropertyDetailCard {
   withVirtualTour?: boolean;
   onClick?: () => void;
   onHover?: () => void;
+  property?: any;
 }
 
 function CardImagePlaceholder(onClick?: () => void) {
@@ -61,8 +63,15 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     withVirtualTour,
     onClick,
     onHover,
+    property,
   } = props;
   const formattedPrice = price.replace(/ /g, "");
+
+  const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    db.savedProperties.add(props!.property);
+  };
 
   return (
     <Card
@@ -122,11 +131,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
                 <CardActions>
                   <IconButton
                     onMouseDown={(event) => event.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      console.log("Hallo");
-                    }}
+                    onClick={handleBookmarkClick}
                     aria-label="settings"
                   >
                     <MdBookmark color="primary" />

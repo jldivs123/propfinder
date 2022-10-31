@@ -26,6 +26,7 @@ export const PropertyList: React.FC<{
         const props = {
           price: propertyData.minimumSellingPrice ?? 0,
           ...propertyData,
+          property,
         };
         return (
           <Grid
