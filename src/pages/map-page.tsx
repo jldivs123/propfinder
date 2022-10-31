@@ -1,36 +1,20 @@
-import styled from "styled-components";
-import { FC, useState, useEffect, useRef } from "react";
-import ReactMap, { Marker, Popup, MapRef } from "react-map-gl";
-import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
-import { LngLatBounds, LngLat } from "mapbox-gl";
+import { useState, useEffect } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
+import { Puff } from "react-loader-spinner";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import { BottomSheet } from "react-spring-bottom-sheet";
 
-import { THEME_COLORS } from "../constants";
-import { PropertyFilter, PropertyCard, PropertyList } from "../components";
 import {
-  MAPBOX_PUBLIC_TOKEN,
-  MANILA_LATITUDE,
-  GeoJSON,
-  MANILA_LONGITUDE,
-} from "../constants";
+  PropertyFilter,
+  PropertyList,
+  MapComponent,
+  Markers,
+} from "../components";
+import { Coordinates, MANILA_LATITUDE, MANILA_LONGITUDE } from "../constants";
 import { useDebounce } from "../utils/hooks";
-import { calculateGeohashPrecision } from "../utils";
+import { calculateGeohashPrecision, useScreenSize } from "../utils";
 import { getNearestProperties } from "../lib/apis";
-
-export interface Coordinates {
-  lat: number;
-  lng: number;
-}
-
-const StyledPopup = styled(Popup)`
-  border: 2px solid red;
-`;
-
-const StyledDrawer = styled(Drawer)`
-  background-color: ${THEME_COLORS.GRAY};
-`;
 
 export const getUserAddress = (
   position: any,
@@ -42,101 +26,18 @@ export const getUserAddress = (
   });
 };
 
-const MapContainer = styled.div``;
-// * https://github.com/visgl/react-map-gl/issues/750
-const Markers = (onClick: (args: any) => any, properties: any) => {
-  return (
-    <>
-      {properties.map((property: any, index: number) => {
-        const latitude = property.geojson.geometry.coordinates[1];
-        const longitude = property.geojson.geometry.coordinates[0];
-        return (
-          <Marker
-            key={"marker-" + index}
-            latitude={latitude}
-            longitude={longitude}
-          >
-            <img
-              src="./Home_4.png"
-              onClick={() => {
-                onClick(property);
-              }}
-            />
-          </Marker>
-        );
-      })}
-    </>
-  );
-};
-
-const MapComponent: FC<
-  Coordinates & { viewStateHandler: (value: any) => void }
-> = ({ children, lat, lng, viewStateHandler }) => {
-  // * Philippine Area of Responsibility
-  const southWest = new LngLat(114.873046875, 5.090944175033399);
-  const northEast = new LngLat(128.4521484375, 20.014645445341365);
-  const bounds = new LngLatBounds(southWest, northEast);
-  const mapRef = useRef<MapRef | null>(null);
-
-  const stateHandler = (value: any) => {
-    const map = mapRef.current;
-    if (map) {
-      const bounds: any = map.getMap()?.getBounds();
-      const boundCoordinates: any = [
-        [bounds._ne.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._sw.lng],
-      ];
-      // * `polygon` variable represents the rectangular area
-      const polygon: any = [
-        [bounds._ne.lat, bounds._sw.lng],
-        [bounds._ne.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._sw.lng],
-      ];
-      const area = convertArea(getAreaOfPolygon(polygon), "km2");
-      const center = getCenterOfBounds(boundCoordinates);
-      viewStateHandler({ area, center });
-    }
-  };
-
-  return (
-    <ReactMap
-      initialViewState={{
-        longitude: lng,
-        latitude: lat,
-        zoom: 4,
-      }}
-      ref={mapRef}
-      onZoom={(e) => {
-        stateHandler(e.viewState);
-      }}
-      onMove={(e: any) => stateHandler(e.viewState)}
-      style={{ width: "100%", height: "90vh" }}
-      mapStyle="mapbox://styles/mapbox/light-v10"
-      mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-      // maxBounds={bounds}
-      maxZoom={18}
-      minZoom={3}
-    >
-      {children}
-    </ReactMap>
-  );
-};
-
 const MapPage = () => {
   const [viewState, setViewState] = useState<any>();
   const debouncedViewingArea = useDebounce(viewState, 500);
   const {
     response: nearestProperties,
     isLoading: isFetchingNearProperties,
-    error: nearPropertiesError,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
   const debouncedNearProperties = useDebounce(nearestProperties, 500);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<GeoJSON | null>(
-    null
-  );
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [activeProperty, setActiveProperty] = useState<any | null>(null);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -145,6 +46,7 @@ const MapPage = () => {
     timeout: 5000,
     maximumAge: 0,
   };
+  const display = useScreenSize();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -156,80 +58,170 @@ const MapPage = () => {
 
   useEffect(() => {
     if (debouncedViewingArea) {
-      const area = debouncedViewingArea.area;
+      const { area, center } = debouncedViewingArea;
       const precision = calculateGeohashPrecision(area);
+      // ! For some reason, they are reversed
       fetchNearProperties({
-        leftEdge: debouncedViewingArea.center.latitude,
-        rightEdge: debouncedViewingArea.center.longitude,
-        precision: 1,
+        lat: center.longitude,
+        lng: center.latitude,
+        precision,
       });
     }
   }, [debouncedViewingArea]);
+
+  useEffect(() => {
+    fetchNearProperties({
+      lat: 14,
+      lng: 121,
+      precision: 1,
+    });
+  }, []);
 
   const openPropertyDetails = (property: any) => {
     setSelectedProperty(property);
     setIsPropertyDrawerActive(true);
   };
 
+  const onPropertyHover = (property: any) => {
+    setActiveProperty(property);
+    setIsPropertyDrawerActive(true);
+  };
+
   return (
-    <div className="flex mx-0 w-full border-solid border-1 border-indigo-600">
-      <StyledDrawer
-        variant="permanent"
-        className="w-1/3 bg-white max-w-4xl"
-        ModalProps={{
-          keepMounted: true,
+    <div className="flex w-100 h-100 flex-wrap flex-column grow flex-col relative">
+      <Grid
+        item
+        container
+        rowSpacing={{ lg: 2 }}
+        columns={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+        direction={{
+          xs: "column-reverse",
+          sm: "column-reverse",
+          md: "row",
+        }}
+        sx={{
+          position: "relative",
+          height: {
+            lg: "100%",
+            md: "100%",
+            sm: "80%",
+          },
+          flexGrow: 1,
+          width: "100%",
         }}
       >
-        <Toolbar />
-        {
-          <PropertyFilter>
-            <PropertyList
-              properties={
-                (debouncedNearProperties as any)
-                  ? (debouncedNearProperties as any).results
-                  : []
-              }
-            />
-          </PropertyFilter>
-        }
-      </StyledDrawer>
-      <MapContainer className="flex-1 shrink-1 map-container w-2/3 h-100">
-        <MapComponent
-          lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
-          lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
-          viewStateHandler={(viewStateEventPayload) =>
-            setViewState(viewStateEventPayload)
-          }
+        <Grid
+          item
+          md={6}
+          lg={6}
+          xl={4}
+          sx={{ display: { sm: "none", md: "block" } }}
         >
-          {Markers(
-            openPropertyDetails,
-            (debouncedNearProperties as any)
-              ? (debouncedNearProperties as any).results
-              : []
-          )}
-          {isPropertyModalActive && selectedProperty && (
-            <StyledPopup
-              anchor="bottom"
-              closeOnClick={true}
-              onClose={() => {
-                setIsPropertyDrawerActive(!isPropertyModalActive);
-              }}
-              latitude={
-                +selectedProperty?.geometry.coordinates[1] ?? +MANILA_LATITUDE
-              }
-              longitude={
-                +selectedProperty?.geometry.coordinates[0] ?? +MANILA_LONGITUDE
+          <PropertyFilter>
+            {/* <Toolbar /> */}
+            {isFetchingNearProperties && (
+              <Puff
+                height="5rem"
+                width="5rem"
+                radius={1}
+                color="#6c63ff"
+                ariaLabel="puff-loading"
+                wrapperStyle={{ marginTop: "50%" }}
+                wrapperClass="m-auto my-2"
+                visible={true}
+              />
+            )}{" "}
+            {!isFetchingNearProperties && (
+              <PropertyList
+                properties={
+                  (debouncedNearProperties as any)
+                    ? (debouncedNearProperties as any).results
+                    : []
+                }
+                onHover={onPropertyHover}
+              />
+            )}
+          </PropertyFilter>
+        </Grid>
+        <Grid
+          item
+          lg={6}
+          md={6}
+          xl={8}
+          sm={12}
+          sx={{
+            height: { lg: "100%", md: "100%", sm: "100%" },
+            flexGrow: 1,
+            display: "flex",
+          }}
+        >
+          <Box
+            sx={{
+              height: "calc(100vh - 4rem)",
+              minHeight: "calc(100vh - 4rem)",
+              width: { md: "100%", lg: "100%", xs: "100%" },
+              position: { lg: "sticky", md: "sticky", sm: "relative" },
+              top: { sm: 0, md: "4rem", lg: "4rem" },
+              contain: "paint layout",
+            }}
+          >
+            <MapComponent
+              lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
+              lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
+              viewStateHandler={(viewStateEventPayload) =>
+                setViewState(viewStateEventPayload)
               }
             >
-              <PropertyCard
-                property={selectedProperty.properties}
-                lat={selectedProperty.geometry.coordinates[1]}
-                lng={selectedProperty.geometry.coordinates[0]}
+              {Markers(
+                openPropertyDetails,
+                (debouncedNearProperties as any)
+                  ? (debouncedNearProperties as any).results
+                  : [],
+                activeProperty
+              )}
+            </MapComponent>
+          </Box>
+        </Grid>
+      </Grid>
+      <Box sx={{ display: { xs: "block", md: "none", lg: "none" } }}>
+        <BottomSheet
+          open={display.MD}
+          blocking={false}
+          skipInitialTransition
+          defaultSnap={({ maxHeight }: { maxHeight: number }) => maxHeight / 2}
+          snapPoints={({ maxHeight }: { maxHeight: number }) => [
+            maxHeight - maxHeight / 10,
+            maxHeight / 4,
+            maxHeight * 0.6,
+          ]}
+          expandOnContentDrag
+        >
+          <Box className="flex justify-center py-5 item-center">
+            {isFetchingNearProperties && (
+              <Puff
+                height="5rem"
+                width="5rem"
+                radius={1}
+                color="#6c63ff"
+                ariaLabel="puff-loading"
+                wrapperStyle={{}}
+                wrapperClass="w-100 flex justify-center items-center"
+                visible={true}
               />
-            </StyledPopup>
-          )}
-        </MapComponent>
-      </MapContainer>
+            )}{" "}
+            {!isFetchingNearProperties && (
+              <PropertyList
+                properties={
+                  (debouncedNearProperties as any)
+                    ? (debouncedNearProperties as any).results
+                    : []
+                }
+                onHover={onPropertyHover}
+              />
+            )}
+          </Box>
+        </BottomSheet>
+      </Box>
     </div>
   );
 };

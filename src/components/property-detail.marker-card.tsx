@@ -9,11 +9,11 @@ import Link from "@mui/material/Link";
 import {
   PropertyDetail,
   GOOGLE_STREETVIEW_URL,
-  DUMMY_IMAGE,
+  MISSING_PROPERTY_IMG,
 } from "../constants";
 
 export const PropertyCard: React.FC<{
-  property: PropertyDetail;
+  property: any;
   lat: number;
   lng: number;
 }> = (props) => {
@@ -22,7 +22,8 @@ export const PropertyCard: React.FC<{
     "latitude",
     `${lat}`
   ).replace("longitude", `${lng}`);
-  const marketPrice = property.selling_price.replace(/ /g, "");
+  console.log(property);
+  const marketPrice = property?.minimumSellingPrice?.replace(/ /g, "");
 
   return (
     <Card sx={{ maxWidth: 345, cursor: "pointer", minwidth: 345 }}>
@@ -30,7 +31,7 @@ export const PropertyCard: React.FC<{
         component="img"
         alt="Property image"
         height="140"
-        image={DUMMY_IMAGE}
+        image={MISSING_PROPERTY_IMG}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
@@ -45,7 +46,7 @@ export const PropertyCard: React.FC<{
           color="text.secondary"
           sx={{ textTransform: "uppercase" }}
         >
-          {property.address}
+          {property.rawAddress}
         </Typography>
       </CardContent>
       <CardActions>

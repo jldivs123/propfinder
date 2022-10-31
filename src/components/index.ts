@@ -4,3 +4,5 @@ export * from "./property-detail.marker-card";
 export * from "./property-detail.list";
 export * from "./property.card";
 export * from "./property-detail";
+export * from "./footer";
+export * from "./map";

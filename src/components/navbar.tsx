@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef, useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -6,26 +6,35 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
+import MdBookmark from "@mui/icons-material/Bookmark";
+import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-const pages = ["Sell", "Buy", "Rent"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
-const StyledImg = styled.img`
-  width: 72px; /* or any custom size */
-  height: 36px;
-  object-fit: fill;
-`;
+const pages = ["The Story", "FAQ", "Contacts"];
 
 const ResponsiveAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const appBarRef = useRef<any>(null);
   const logo = "/HomeFinder.png";
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.onscroll = function () {
+      if (appBarRef.current) {
+        if (window.pageYOffset !== 0) {
+          appBarRef.current.style.boxShadow =
+            "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)";
+        } else {
+          appBarRef.current.style.boxShadow = "none";
+        }
+      }
+    };
+  }, []);
 
   const goToHome = () => {
     navigate("/");
@@ -48,15 +57,16 @@ const ResponsiveAppBar = () => {
   return (
     <AppBar
       position="fixed"
-      elevation={1}
+      elevation={0}
+      ref={appBarRef}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: (theme) => "#FFF",
-        height: 84,
+        backgroundColor: "#FFF",
       }}
+      className="h-16"
     >
-      <Container maxWidth="xl">
+      <Container>
         <Toolbar>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -108,11 +118,17 @@ const ResponsiveAppBar = () => {
               flexGrow: 1,
               width: "36px",
               height: "36px",
-              display: { xs: "none", md: "block", color: "black" },
+              display: { xs: "block", md: "block", color: "black" },
             }}
           >
-            <Button onClick={goToHome}>
-              <StyledImg src={logo} alt="Homer-logo" />
+            <Button onClick={goToHome} style={{ marginTop: "-5px" }}>
+              <Typography
+                variant="h4"
+                fontWeight="800"
+                sx={{ textTransform: "lowercase" }}
+              >
+                homer.
+              </Typography>
             </Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
@@ -133,6 +149,17 @@ const ResponsiveAppBar = () => {
                 </Typography>
               </Button>
             ))}
+          </Box>
+          <Box sx={{ display: { md: "flex" } }}>
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="secondary">
+                <MdBookmark color="primary" />
+              </Badge>
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>

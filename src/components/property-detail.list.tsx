@@ -1,44 +1,54 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
 
 import { PropertyDetailCard } from "../components";
 
-export const PropertyList: React.FC<{ properties: Array<any> }> = (props) => {
-  const { properties } = props;
-  const navigate = useNavigate();
+export const PropertyList: React.FC<{
+  properties: Array<any>;
+  onHover: (property: any) => void;
+}> = (props) => {
+  const { properties, onHover } = props;
 
-  const visitProperty = (propertyId: string, property: any) => {
-    navigate("/properties/" + propertyId);
+  const visitProperty = (propertyId: string) => {
+    window.open(`/properties/${propertyId}`, "_blank");
   };
   return (
-    <Box sx={{ width: "100%", bgcolor: "#FFF" }}>
-      {properties.map((property) => {
+    <Grid
+      container
+      spacing={{ xs: 4, md: 4 }}
+      columns={{ xs: 4, sm: 4, md: 12, lg: 12 }}
+      className="grow"
+      justifyContent="center"
+      sx={{ padding: "2rem" }}
+    >
+      {properties.map((property: any, index: number) => {
         const propertyData = property.geojson.properties;
         const props = {
           price: propertyData.minimumSellingPrice ?? 0,
           ...propertyData,
         };
         return (
-          <Box
-            key={propertyData.address}
-            sx={{
-              boxShadow: 2,
-              width: "98%",
-              margin: "10px 5px",
-              padding: 0,
-              bgcolor: "#white",
-              borderRadius: "16px",
-              display: "flex",
-            }}
+          <Grid
+            lg={6}
+            md={6}
+            sm={2}
+            xs={4}
+            item
+            container
+            justifyContent="center"
+            alignItems="center"
+            key={`${propertyData.address}-${index}`}
+            onMouseEnter={() => onHover(property)}
+            onMouseLeave={() => onHover(null)}
+            sx={{ margin: 0, padding: 0 }}
           >
             <PropertyDetailCard
-              onClick={() => visitProperty(props.address, propertyData)}
+              onClick={() => visitProperty(property.pk)}
               {...props}
             />
-          </Box>
+          </Grid>
         );
       })}
-    </Box>
+    </Grid>
   );
 };

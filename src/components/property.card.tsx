@@ -5,30 +5,48 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MdBookmark from "@mui/icons-material/Bookmark";
+import { CardActionArea, CardActions } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
 
-import { GeoJSON, DUMMY_IMAGE, PropertyDetail } from "../constants";
+import { MISSING_PROPERTY_IMG } from "../constants";
 
 interface IPropertyDetailCard {
   type: string;
   address: string;
   price: string;
-  floorSize?: number;
-  lotSize?: number;
+  floorArea?: number;
+  lotArea?: number;
   numOfRoom?: number;
   imgUrls?: string[];
   withVirtualTour?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  onHover?: () => void;
 }
 
-const numberGenerator = (type: "room" | "area") => {
-  return type === "room"
-    ? Math.floor(Math.random() * 3) + 1
-    : Math.floor(Math.random() * 40) + 27;
-};
+function CardImagePlaceholder(onClick?: () => void) {
+  // * https://dev.to/franciscomendes10866/how-to-create-modern-cards-using-react-and-tailwind-2ded
+  return (
+    <div
+      className="flex flex-col justify-center text-center items-center rounded-2xl h-48 m-0"
+      style={{ width: "100%", cursor: "pointer" }}
+    >
+      <CardMedia
+        component="img"
+        image={MISSING_PROPERTY_IMG}
+        alt="Property image"
+        className="h-100 w-100 p-0"
+        sx={{
+          width: "100%",
+        }}
+      />
+      <Typography className="text-white" color="primary">
+        No image available.
+      </Typography>
+    </div>
+  );
+}
 
 export function PropertyDetailCard(props: IPropertyDetailCard) {
   const theme = useTheme();
@@ -36,81 +54,105 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     type,
     address,
     price,
-    floorSize,
-    lotSize,
+    floorArea,
+    lotArea,
     numOfRoom,
     imgUrls,
     withVirtualTour,
     onClick,
+    onHover,
   } = props;
+  const formattedPrice = price.replace(/ /g, "");
 
   return (
     <Card
       onClick={onClick}
+      onMouseEnter={onHover}
       sx={{
-        display: "flex",
         bgcolor: "#fff",
-        borderRadius: "16px",
-        cursor: "pointer",
+        borderRadius: "24px",
+        maxWidth: "98%",
+        minWidth: "45%",
+        maxHeight: 400,
+        position: "relative",
+        border: "2px solid",
+        boxShadow: "none",
+        filter:
+          "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
       }}
+      className="h-full w-80 group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >
-      <Box
-        sx={{ display: "flex", flexDirection: "column" }}
-        className="max-w-lg"
-      >
-        <CardContent sx={{ flex: "1 0 auto" }}>
-          <Typography
-            variant="subtitle1"
-            color="text.secondary"
-            component="div"
-          >
-            <b>
-              <span>&#8369;</span>
-              {price.replace(/" "/g, "")}
-            </b>
-          </Typography>
-          <Typography component="div" variant="body1">
-            {type}
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="body2">
-              {numberGenerator("room")} Bedroom/s
+      <CardActionArea>
+        {!imgUrls && CardImagePlaceholder(onClick)}
+        {imgUrls && (
+          <CardMedia
+            component="img"
+            image={MISSING_PROPERTY_IMG}
+            alt="Property image"
+            onClick={onClick}
+            sx={{
+              width: "94%",
+              cursor: "pointer",
+            }}
+          />
+        )}
+        <CardContent
+          sx={{
+            flex: "1 0 auto",
+            padding: "0 1rem 1rem 1rem",
+            marginTop: "-2rem",
+          }}
+        >
+          <Grid container direction="column">
+            <Grid container item justifyContent="center" alignItems="center">
+              <Grid item xs={10}>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  className="group-hover:text-white"
+                  component="div"
+                >
+                  <b>
+                    <span>&#8369;</span>
+                    {formattedPrice}
+                  </b>
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <CardActions>
+                  <IconButton
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      console.log("Hallo");
+                    }}
+                    aria-label="settings"
+                  >
+                    <MdBookmark color="primary" />
+                  </IconButton>
+                </CardActions>
+              </Grid>
+            </Grid>
+            <Typography component="div" variant="body1">
+              {type}
             </Typography>
-            <Typography variant="body2">
-              {numberGenerator("room")} Bathroom/s
-            </Typography>
-            <Typography variant="body2">
-              {numberGenerator("area")} sqm
-            </Typography>
-          </Box>
-          <Typography variant="body2">
-            <LocationOnIcon />
-            {address.replace(/ /g, "")}
-          </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                className="group-hover:text-white"
+              >
+                {floorArea && floorArea > 0
+                  ? `Floor area: ${floorArea} sq/m`
+                  : "Floor area: N/A"}{" "}
+                &#183;
+                {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
+              </Typography>
+            </Box>
+          </Grid>
         </CardContent>
-        <Box sx={{ display: "flex" }}>
-          {lotSize && <AspectRatioIcon>lotSize</AspectRatioIcon>}
-          {floorSize && <MapsHomeWorkIcon>floorSize</MapsHomeWorkIcon>}
-          {numOfRoom && <MeetingRoomIcon>numOfRoom</MeetingRoomIcon>}
-        </Box>
-        {/* <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
-          <IconButton aria-label="previous">
-            <LinkIcon />
-          </IconButton>
-          <IconButton aria-label="play/pause">
-            <PanoramaPhotosphereIcon />
-          </IconButton>
-          <IconButton aria-label="next">
-            <ContactsIcon />
-          </IconButton>
-        </Box> */}
-      </Box>
-      <CardMedia
-        component="img"
-        sx={{ width: 151 }}
-        image={DUMMY_IMAGE}
-        alt="Property image"
-      />
+      </CardActionArea>
     </Card>
   );
 }
