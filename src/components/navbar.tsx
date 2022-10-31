@@ -41,6 +41,11 @@ const ResponsiveAppBar = () => {
   const goToHome = () => {
     navigate("/");
   };
+
+  const goToBookmark = () => {
+    navigate("/bookmark");
+  };
+
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -157,6 +162,7 @@ const ResponsiveAppBar = () => {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              onClick={goToBookmark}
             >
               {bookmarkedProperties && (
                 <Badge
