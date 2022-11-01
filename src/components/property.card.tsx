@@ -118,7 +118,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
           sx={{
             flex: "1 0 auto",
             padding: "0 1rem 1rem 1rem",
-            marginTop: "-2rem",
+            marginTop: "-1.5rem",
           }}
         >
           <Grid container direction="column">
