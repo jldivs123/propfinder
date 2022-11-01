@@ -22,11 +22,10 @@ export const PropertyCard: React.FC<{
     "latitude",
     `${lat}`
   ).replace("longitude", `${lng}`);
-  console.log(property);
   const marketPrice = property?.minimumSellingPrice?.replace(/ /g, "");
 
   return (
-    <Card sx={{ maxWidth: 345, cursor: "pointer", minwidth: 345 }}>
+    <Card sx={{ cursor: "pointer" }}>
       <CardMedia
         component="img"
         alt="Property image"

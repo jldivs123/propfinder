@@ -7,7 +7,7 @@ import "react-spring-bottom-sheet/dist/style.css";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 // * Components
-import { MapPage, PropertyDetailPage, HomePage } from "./pages";
+import { MapPage, PropertyDetailPage, HomePage, BookMarkPage } from "./pages";
 import { ResponsiveAppBar, Footer } from "./components";
 
 import { ScreenSizeContextProvider } from "./utils";
@@ -16,11 +16,11 @@ import "./App.css";
 const lightTheme = createTheme({
   palette: {
     primary: {
-      main: "#6c63ff",
+      main: "#6d65fb",
       light: "#0B0F58",
     },
     secondary: {
-      main: "#f50057",
+      main: "#fa557a",
     },
     background: {
       paper: "#f2f2f2",
@@ -86,6 +86,9 @@ function App() {
                   </Route>
                   <Route path="/map" element={<MapPage />}>
                     Map
+                  </Route>
+                  <Route path="/bookmark" element={<BookMarkPage />}>
+                    Bookmark
                   </Route>
                   <Route
                     path="/properties/:id"

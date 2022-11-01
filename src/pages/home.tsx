@@ -32,15 +32,31 @@ export function HomePage() {
             <Typography
               variant="h1"
               fontWeight="bold"
-              fontSize={{ xs: "4rem", sm: "4rem", md: "6rem" }}
+              fontSize="1rem"
               className="prose md:prose-lg lg:prose-xl"
+            >
+              Property catalog made with{" "}
+              <span style={{ color: "#6d65fb" }}>love</span> &{" "}
+              <span style={{ color: "#6d65fb" }}>caffeine.</span>
+            </Typography>
+            <Typography
+              variant="h1"
+              fontWeight="bold"
+              fontSize={{ xs: "3rem", sm: "3.5rem", md: "5rem" }}
+              className="prose md:prose-lg lg:prose-xl"
+              color="#2e2e40"
             >
               Finding a home shouldn't be hard.
             </Typography>
-            <Button variant="contained" disableElevation onClick={handleClick}>
+            <Button
+              variant="outlined"
+              color="primary"
+              disableElevation
+              onClick={handleClick}
+            >
               <Typography
                 variant="h4"
-                fontSize={{ xs: "1.5rem", sm: "2rem", md: "2rem" }}
+                fontSize={{ xs: "1.5rem", sm: "1rem", md: "24px" }}
                 fontWeight="800"
               >
                 Start looking.
@@ -51,9 +67,9 @@ export function HomePage() {
             item
             lg={6}
             md={6}
-            display={{ sm: "none", xs: "none", md: "block" }}
+            display={{ sm: "block", xs: "block", md: "block" }}
           >
-            <img src="/undraw_map_re_60yf.svg" alt="homer-image" />
+            <img src="/undraw_choosing_house_re_1rv7.svg" alt="homer-image" />
           </Grid>
         </Grid>
       </Stack>

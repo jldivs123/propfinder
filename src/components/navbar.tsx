@@ -11,8 +11,10 @@ import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useLiveQuery } from "dexie-react-hooks";
+
+import { db } from "../lib/db";
 
 const pages = ["The Story", "FAQ", "Contacts"];
 
@@ -20,8 +22,8 @@ const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const appBarRef = useRef<any>(null);
-  const logo = "/HomeFinder.png";
   const navigate = useNavigate();
+  const bookmarkedProperties = useLiveQuery(() => db.savedProperties.toArray());
 
   useEffect(() => {
     window.onscroll = function () {
@@ -39,6 +41,11 @@ const ResponsiveAppBar = () => {
   const goToHome = () => {
     navigate("/");
   };
+
+  const goToBookmark = () => {
+    navigate("/bookmark");
+  };
+
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -155,10 +162,16 @@ const ResponsiveAppBar = () => {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              onClick={goToBookmark}
             >
-              <Badge badgeContent={4} color="secondary">
-                <MdBookmark color="primary" />
-              </Badge>
+              {bookmarkedProperties && (
+                <Badge
+                  badgeContent={bookmarkedProperties.length}
+                  color="secondary"
+                >
+                  <MdBookmark color="primary" />
+                </Badge>
+              )}
             </IconButton>
           </Box>
         </Toolbar>
