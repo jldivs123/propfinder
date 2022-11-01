@@ -1,68 +1,18 @@
 import { useEffect } from "react";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import { useLiveQuery } from "dexie-react-hooks";
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
+import { PropertyDetailCard } from "../components";
 import { db } from "../lib/db";
-
-const columns: GridColDef[] = [
-  {
-    field: "title",
-    headerName: "Title",
-    description: "Property title",
-    sortable: false,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.geojson.properties.titleCode || ""}`,
-  },
-  { field: "author", headerName: "Author", width: 70 },
-  {
-    field: "offerType",
-    headerName: "Offer Type",
-    description: "",
-    sortable: true,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.propertyType || ""}`,
-  },
-  {
-    field: "type",
-    headerName: "Type",
-    description: "Property type",
-    sortable: true,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.geojson.properties.type || ""}`,
-  },
-  {
-    field: "minSellingPrice",
-    headerName: "Min. Price",
-    description: "Minimum selling price",
-    sortable: true,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.geojson.properties.minimumSellingPrice || ""}`,
-  },
-  {
-    field: "remark",
-    headerName: "Remark",
-    description: "",
-    sortable: true,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.geojson.properties.remark || ""}`,
-  },
-  {
-    field: "address",
-    headerName: "Address",
-    description: "",
-    sortable: true,
-    width: 480,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.geojson.properties.rawAddress || ""}`,
-  },
-];
 
 export const BookMarkPage = () => {
   const bookmarkedProperties = useLiveQuery(() => db.savedProperties.toArray());
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(bookmarkedProperties);
@@ -86,15 +36,48 @@ export const BookMarkPage = () => {
       >
         <Grid item xs={8} md={8} lg={8} xl={8}>
           <Stack sx={{ height: "100%" }} spacing={2}>
-            <Typography variant="h5">Properties you bookmarked.</Typography>
-            <DataGrid
-              getRowId={(row) => row.pk}
-              rows={bookmarkedProperties ?? []}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              checkboxSelection
-            />
+            <Typography variant="h4" fontWeight={800} color="#5A5A5A">
+              Properties you bookmarked.
+            </Typography>
+            <Grid
+              container
+              columns={12}
+              columnSpacing={2}
+              rowSpacing={2}
+              justifyContent="center"
+            >
+              {bookmarkedProperties &&
+                bookmarkedProperties.map((bookmarkProperty) => {
+                  const {
+                    geojson: {
+                      properties: {
+                        type,
+                        address,
+                        minimumSellingPrice,
+                        floorArea,
+                        lotArea,
+                        numOfRoom,
+                      },
+                    },
+                  } = bookmarkProperty;
+                  return (
+                    <Grid item sx={{ margin: 0 }}>
+                      <PropertyDetailCard
+                        type={type}
+                        address={address}
+                        price={minimumSellingPrice}
+                        floorArea={floorArea}
+                        lotArea={lotArea}
+                        numOfRoom={numOfRoom}
+                        onClick={() =>
+                          navigate(`/properties/${bookmarkProperty.pk}`)
+                        }
+                        property={bookmarkProperty}
+                      ></PropertyDetailCard>
+                    </Grid>
+                  );
+                })}
+            </Grid>
           </Stack>
         </Grid>
       </Grid>

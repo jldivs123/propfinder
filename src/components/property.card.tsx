@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
+import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,6 +8,7 @@ import MdBookmark from "@mui/icons-material/Bookmark";
 import { CardActionArea, CardActions } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
+import { useLiveQuery } from "dexie-react-hooks";
 
 import { MISSING_PROPERTY_IMG } from "../constants";
 import { db } from "./../lib/db";
@@ -51,7 +51,6 @@ function CardImagePlaceholder(onClick?: () => void) {
 }
 
 export function PropertyDetailCard(props: IPropertyDetailCard) {
-  const theme = useTheme();
   const {
     type,
     address,
@@ -65,12 +64,22 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     onHover,
     property,
   } = props;
+  const isBookmarked = useLiveQuery(() => {
+    return db.savedProperties.where("pk").equals(property.pk).toArray();
+  });
   const formattedPrice = price.replace(/ /g, "");
+
+  useEffect(() => {
+    console.log(isBookmarked);
+  }, [isBookmarked]);
 
   const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    db.savedProperties.add(props!.property);
+    if (isBookmarked?.length) {
+      return db.savedProperties.delete(property.pk);
+    }
+    return db.savedProperties.add(property);
   };
 
   return (
@@ -84,7 +93,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
         minWidth: "45%",
         maxHeight: 400,
         position: "relative",
-        border: "2px solid",
+        border: "2px solid #5A5A5A",
         boxShadow: "none",
         filter:
           "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
@@ -134,7 +143,9 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
                     onClick={handleBookmarkClick}
                     aria-label="settings"
                   >
-                    <MdBookmark color="primary" />
+                    <MdBookmark
+                      color={isBookmarked?.length ? "disabled" : "primary"}
+                    />
                   </IconButton>
                 </CardActions>
               </Grid>
