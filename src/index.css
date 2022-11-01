@@ -10,6 +10,7 @@ body, html {
   padding: 0;
   position: relative;
   min-height: auto;
+  color: "#2e2e40";
 }
 
 code {

@@ -36,7 +36,7 @@ export const BookMarkPage = () => {
       >
         <Grid item xs={8} md={8} lg={8} xl={8}>
           <Stack sx={{ height: "100%" }} spacing={2}>
-            <Typography variant="h4" fontWeight={800} color="#5A5A5A">
+            <Typography variant="h4" fontWeight={800} color="#2e2e40">
               Properties you bookmarked.
             </Typography>
             <Grid

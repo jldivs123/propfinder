@@ -16,11 +16,11 @@ import "./App.css";
 const lightTheme = createTheme({
   palette: {
     primary: {
-      main: "#6c63ff",
+      main: "#6d65fb",
       light: "#0B0F58",
     },
     secondary: {
-      main: "#f50057",
+      main: "#fa557a",
     },
     background: {
       paper: "#f2f2f2",
