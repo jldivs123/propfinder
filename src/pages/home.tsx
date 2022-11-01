@@ -53,7 +53,7 @@ export function HomePage() {
             md={6}
             display={{ sm: "none", xs: "none", md: "block" }}
           >
-            <img src="/undraw_map_re_60yf.svg" alt="homer-image" />
+            <img src="/undraw_choosing_house_re_1rv7.svg" alt="homer-image" />
           </Grid>
         </Grid>
       </Stack>
