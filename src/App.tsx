@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "react-spring-bottom-sheet/dist/style.css";
+import "react-loading-skeleton/dist/skeleton.css";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 // * Components

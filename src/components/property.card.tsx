@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,6 +8,7 @@ import { CardActionArea, CardActions } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import { useLiveQuery } from "dexie-react-hooks";
+import Skeleton from "react-loading-skeleton";
 
 import { MISSING_PROPERTY_IMG } from "../constants";
 import { db } from "./../lib/db";
@@ -25,6 +25,7 @@ interface IPropertyDetailCard {
   onClick?: () => void;
   onHover?: () => void;
   property?: any;
+  isLoading?: boolean;
 }
 
 function CardImagePlaceholder(onClick?: () => void) {
@@ -63,15 +64,12 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     onClick,
     onHover,
     property,
+    isLoading,
   } = props;
   const isBookmarked = useLiveQuery(() => {
     return db.savedProperties.where("pk").equals(property.pk).toArray();
   });
   const formattedPrice = price.replace(/ /g, "");
-
-  useEffect(() => {
-    console.log(isBookmarked);
-  }, [isBookmarked]);
 
   const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -101,8 +99,8 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       className="h-full w-80 group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >
       <CardActionArea>
-        {!imgUrls && CardImagePlaceholder(onClick)}
-        {imgUrls && (
+        {!imgUrls && !isLoading && CardImagePlaceholder(onClick)}
+        {imgUrls && !isLoading && (
           <CardMedia
             component="img"
             image={MISSING_PROPERTY_IMG}
@@ -114,58 +112,70 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
             }}
           />
         )}
+        {isLoading && (
+          <Skeleton
+            style={{ width: "92%", margin: "12px 4%" }}
+            className="flex flex-col rounded-2xl h-48 mx-auto"
+          />
+        )}
         <CardContent
           sx={{
             flex: "1 0 auto",
             padding: "0 1rem 1rem 1rem",
-            marginTop: "-1.5rem",
           }}
         >
           <Grid container direction="column">
-            <Grid container item justifyContent="center" alignItems="center">
-              <Grid item xs={10}>
+            {isLoading && <Skeleton count={2} />}
+            {!isLoading && (
+              <Grid container item justifyContent="center" alignItems="center">
+                <Grid item xs={10}>
+                  <Typography
+                    variant="subtitle1"
+                    color="text.secondary"
+                    className="group-hover:text-white"
+                    component="div"
+                  >
+                    <b>
+                      <span>&#8369;</span>
+                      {formattedPrice}
+                    </b>
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <CardActions>
+                    <IconButton
+                      onMouseDown={(event) => event.stopPropagation()}
+                      onClick={handleBookmarkClick}
+                      aria-label="settings"
+                    >
+                      <MdBookmark
+                        color={isBookmarked?.length ? "primary" : "disabled"}
+                      />
+                    </IconButton>
+                  </CardActions>
+                </Grid>
+              </Grid>
+            )}
+            {!isLoading && (
+              <Typography component="div" variant="body1">
+                {type}
+              </Typography>
+            )}
+            {!isLoading && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
-                  variant="subtitle1"
+                  variant="body2"
                   color="text.secondary"
                   className="group-hover:text-white"
-                  component="div"
                 >
-                  <b>
-                    <span>&#8369;</span>
-                    {formattedPrice}
-                  </b>
+                  {floorArea && floorArea > 0
+                    ? `Floor area: ${floorArea} sq/m`
+                    : "Floor area: N/A"}{" "}
+                  &#183;
+                  {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
                 </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <CardActions>
-                  <IconButton
-                    onMouseDown={(event) => event.stopPropagation()}
-                    onClick={handleBookmarkClick}
-                    aria-label="settings"
-                  >
-                    <MdBookmark
-                      color={isBookmarked?.length ? "disabled" : "primary"}
-                    />
-                  </IconButton>
-                </CardActions>
-              </Grid>
-            </Grid>
-            <Typography component="div" variant="body1">
-              {type}
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                className="group-hover:text-white"
-              >
-                {floorArea && floorArea > 0
-                  ? `Floor area: ${floorArea} sq/m`
-                  : "Floor area: N/A"}{" "}
-                &#183;
-                {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
-              </Typography>
-            </Box>
+              </Box>
+            )}
           </Grid>
         </CardContent>
       </CardActionArea>
