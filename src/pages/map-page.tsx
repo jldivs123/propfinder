@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Grid from "@mui/material/Grid";
@@ -26,15 +26,23 @@ export const getUserAddress = (
   });
 };
 
+enum DATA_STATE {
+  LOADING = 1,
+  LOADED,
+  NO_DATA,
+}
+
 const MapPage = () => {
-  const [viewState, setViewState] = useState<any>();
-  const debouncedViewingArea = useDebounce(viewState, 500);
+  const [viewState, setViewState] = useState<any>(); // * User's map positioning
+  const debouncedViewingArea = useDebounce(viewState, 500); // * Debounced user's map positioning
+  const [displayedProperties, setDisplayedProperties] = useState<any[]>([]); // * Visible properties on the list (windowed)
   const {
     response: nearestProperties,
     isLoading: isFetchingNearProperties,
     invokeApi: fetchNearProperties,
-  } = getNearestProperties();
+  } = getNearestProperties(); // * Actual nearest properties, `displayedProperties` are the properties visible on screen
   const debouncedNearProperties = useDebounce(nearestProperties, 500);
+  const [lastItemKey, setLastItemKey] = useState<string | null>(null);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
@@ -55,6 +63,12 @@ const MapPage = () => {
       options
     );
   }, []);
+
+  useEffect(() => {
+    console.log(nearestProperties);
+    const nearestProps: any[] = nearestProperties?.results ?? [];
+    setDisplayedProperties([...displayedProperties, ...nearestProps]);
+  }, [nearestProperties, lastItemKey]);
 
   useEffect(() => {
     if (debouncedViewingArea) {
@@ -86,6 +100,29 @@ const MapPage = () => {
     setActiveProperty(property);
     setIsPropertyDrawerActive(true);
   };
+
+  const loadMoreItems = async (startIndex: number = 0) => {
+    if (lastItemKey) {
+      const itemsPerPage = 20;
+      const itemStatusMap: any = {};
+      const lastItemIndex = startIndex + itemsPerPage;
+      for (let index = startIndex; index <= lastItemIndex; index++) {
+        itemStatusMap[index] = DATA_STATE.LOADING;
+      }
+      setDisplayedProperties([...displayedProperties, ...itemStatusMap]);
+      const { area, center } = debouncedViewingArea;
+      const precision = calculateGeohashPrecision(area);
+      await fetchNearProperties({
+        lat: center.longitude,
+        lng: center.latitude,
+        precision,
+        pk: lastItemKey ?? "",
+      });
+    }
+  };
+
+  const isItemLoaded = (index: number) =>
+    displayedProperties[index] !== DATA_STATE.LOADING;
 
   return (
     <div className="flex w-100 h-100 flex-wrap flex-column grow flex-col relative">
@@ -133,12 +170,10 @@ const MapPage = () => {
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
-                properties={
-                  (debouncedNearProperties as any)
-                    ? (debouncedNearProperties as any).results
-                    : []
-                }
+                properties={(displayedProperties as any) ?? []}
                 onHover={onPropertyHover}
+                isItemLoaded={isItemLoaded}
+                loadMoreItems={loadMoreItems}
               />
             )}
           </PropertyFilter>
@@ -174,9 +209,7 @@ const MapPage = () => {
             >
               {Markers(
                 openPropertyDetails,
-                (debouncedNearProperties as any)
-                  ? (debouncedNearProperties as any).results
-                  : [],
+                (displayedProperties as any) ?? [],
                 activeProperty
               )}
             </MapComponent>
@@ -217,6 +250,8 @@ const MapPage = () => {
                     : []
                 }
                 onHover={onPropertyHover}
+                isItemLoaded={isItemLoaded}
+                loadMoreItems={loadMoreItems}
               />
             )}
           </Box>

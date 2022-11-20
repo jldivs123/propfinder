@@ -26,7 +26,7 @@ export const Markers = (
           ) ?? "0";
         return (
           <Marker
-            key={"marker-" + index}
+            key={"marker-" + property.pk}
             latitude={longitude}
             longitude={latitude}
           >
