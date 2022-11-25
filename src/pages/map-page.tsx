@@ -8,6 +8,7 @@ import { BottomSheet } from "react-spring-bottom-sheet";
 import {
   PropertyFilter,
   PropertyList,
+  PropertyScroller,
   MapComponent,
   Markers,
 } from "../components";
@@ -65,7 +66,6 @@ const MapPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(nearestProperties);
     const nearestProps: any[] = nearestProperties?.results ?? [];
     setDisplayedProperties([...displayedProperties, ...nearestProps]);
   }, [nearestProperties, lastItemKey]);
@@ -101,14 +101,10 @@ const MapPage = () => {
     setIsPropertyDrawerActive(true);
   };
 
-  const loadMoreItems = async (startIndex: number = 0) => {
+  const loadMoreItems = async () => {
     if (lastItemKey) {
       const itemsPerPage = 20;
       const itemStatusMap: any = {};
-      const lastItemIndex = startIndex + itemsPerPage;
-      for (let index = startIndex; index <= lastItemIndex; index++) {
-        itemStatusMap[index] = DATA_STATE.LOADING;
-      }
       setDisplayedProperties([...displayedProperties, ...itemStatusMap]);
       const { area, center } = debouncedViewingArea;
       const precision = calculateGeohashPrecision(area);
@@ -120,9 +116,6 @@ const MapPage = () => {
       });
     }
   };
-
-  const isItemLoaded = (index: number) =>
-    displayedProperties[index] !== DATA_STATE.LOADING;
 
   return (
     <div className="flex w-100 h-100 flex-wrap flex-column grow flex-col relative">
@@ -168,14 +161,20 @@ const MapPage = () => {
                 visible={true}
               />
             )}{" "}
-            {!isFetchingNearProperties && (
+            {/* {!isFetchingNearProperties && (
               <PropertyList
                 properties={(displayedProperties as any) ?? []}
                 onHover={onPropertyHover}
                 isItemLoaded={isItemLoaded}
                 loadMoreItems={loadMoreItems}
               />
-            )}
+            )} */}
+            <PropertyScroller
+              hasNextPage={!!lastItemKey}
+              isNextPageLoading={isFetchingNearProperties}
+              items={debouncedNearProperties}
+              loadNextPage={loadMoreItems}
+            />
           </PropertyFilter>
         </Grid>
         <Grid
@@ -242,7 +241,7 @@ const MapPage = () => {
                 visible={true}
               />
             )}{" "}
-            {!isFetchingNearProperties && (
+            {/* {!isFetchingNearProperties && (
               <PropertyList
                 properties={
                   (debouncedNearProperties as any)
@@ -253,7 +252,7 @@ const MapPage = () => {
                 isItemLoaded={isItemLoaded}
                 loadMoreItems={loadMoreItems}
               />
-            )}
+            )} */}
           </Box>
         </BottomSheet>
       </Box>

@@ -18,20 +18,30 @@ export const PropertyList: React.FC<{
   };
 
   const Row = (props: any) => {
-    const { index, style, isItemLoaded } = props;
-    console.log("HALLOW", index);
-    let label;
-    if (isItemLoaded) {
-      label = `Row ${index}`;
-    } else {
-      label = "Loading...";
-    }
+    const { index, style, isItemLoaded, data: property } = props;
+    console.log("HALLOW", props);
+    const isLoaded = isItemLoaded(index);
     return (
-      <div className="ListItem" style={style}>
-        {label}
-        {isItemLoaded}
-      </div>
-    );
+      isLoaded &&
+      property && (
+        <Grid
+          item
+          container
+          justifyContent="center"
+          alignItems="center"
+          key={`-${index}`}
+          onMouseEnter={() => onHover(property)}
+          onMouseLeave={() => onHover(null)}
+          sx={{ margin: 0, padding: 0, maxWidth: "345px", ...style }}
+        >
+          <PropertyDetailCard
+            onClick={() => visitProperty(property.pk)}
+            {...props}
+            isLoading={true}
+          />
+        </Grid>
+      )
+    )(!isLoaded && <div>Loading...</div>);
   };
 
   return (
@@ -40,7 +50,7 @@ export const PropertyList: React.FC<{
       columnSpacing={2}
       rowSpacing={2}
       columns={12}
-      className="grow"
+      className="grow border border-red-600"
       justifyContent="center"
       sx={{ padding: "2rem" }}
     >
@@ -51,13 +61,13 @@ export const PropertyList: React.FC<{
       >
         {({ onItemsRendered, ref }) => (
           <List
-            className="List"
+            className="List flex-grow"
             height={150}
             itemCount={1000}
             itemSize={30}
             onItemsRendered={onItemsRendered}
             ref={ref}
-            width={300}
+            width="100%"
           >
             {Row}
           </List>

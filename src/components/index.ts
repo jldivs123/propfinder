@@ -6,3 +6,4 @@ export * from "./property.card";
 export * from "./property-detail";
 export * from "./footer";
 export * from "./map";
+export * from "./property-scroller";
