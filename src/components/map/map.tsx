@@ -1,22 +1,49 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useMemo, useState, useCallback, useEffect } from "react";
 import ReactMap, { Marker, MapRef } from "react-map-gl";
 import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
-import { LngLatBounds, LngLat } from "mapbox-gl";
 import Typography from "@mui/material/Typography";
 
 import { MAPBOX_PUBLIC_TOKEN, Coordinates } from "../../constants";
+import { useDebounce } from "../../utils/hooks";
 
-// * https://github.com/visgl/react-map-gl/issues/750
-export const Markers = (
-  onClick: (args: any) => any,
-  properties: any,
-  activeProperty: any
-) => {
+export const MapComponent: FC<
+  Coordinates & {
+    viewStateHandler: (value: any) => void;
+    onClick: any;
+    properties: any;
+    activeProperty: any;
+  }
+> = ({ lat, lng, viewStateHandler, onClick, properties, activeProperty }) => {
+  // * Philippine Area of Responsibility
+  const mapRef = useRef<MapRef | null>(null);
+  const style = useRef<any>();
+  const initialViewState = useRef<any>();
+  const [viewState, setViewState] = useState<any>();
+  const [calculatedViewState, setCalculatedViewState] = useState<any>();
+  const stateHandler = useCallback((value: any) => {
+    setViewState(value.viewState);
+  }, []);
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
 
-  return (
-    <>
-      {properties.map((property: any, index: number) => {
+  useEffect(() => {
+    style.current = {
+      maxWidth: "100%",
+      width: "100%",
+      minWidth: "100%",
+      minHeight: "100px",
+      flexGrow: "1",
+    };
+    initialViewState.current = {
+      longitude: lng,
+      latitude: lat,
+      zoom: 4,
+    };
+  }, []);
+
+  const markers = useMemo(() => {
+    if (properties && properties.results) {
+      const propResults = properties.results;
+      return propResults.map((property: any, index: number) => {
         const latitude = property.geojson.geometry.coordinates[0];
         const longitude = property.geojson.geometry.coordinates[1];
         const price =
@@ -47,21 +74,13 @@ export const Markers = (
             </div>
           </Marker>
         );
-      })}
-    </>
-  );
-};
+      });
+    } else {
+      return <></>;
+    }
+  }, [properties]);
 
-export const MapComponent: FC<
-  Coordinates & { viewStateHandler: (value: any) => void }
-> = ({ children, lat, lng, viewStateHandler }) => {
-  // * Philippine Area of Responsibility
-  const southWest = new LngLat(114.873046875, 5.090944175033399);
-  const northEast = new LngLat(128.4521484375, 20.014645445341365);
-  const bounds = new LngLatBounds(southWest, northEast);
-  const mapRef = useRef<MapRef | null>(null);
-
-  const stateHandler = (value: any) => {
+  useMemo(() => {
     const map = mapRef.current;
     if (map) {
       const bounds: any = map.getMap()?.getBounds();
@@ -74,7 +93,7 @@ export const MapComponent: FC<
       ];
       const area = convertArea(getAreaOfPolygon(polygon), "km2");
       const center = getCenterOfBounds(polygon);
-      viewStateHandler({
+      setCalculatedViewState({
         area,
         center,
         bounds: {
@@ -85,31 +104,27 @@ export const MapComponent: FC<
         },
       });
     }
-  };
+  }, [viewState]);
+
+  const debouncedViewState = useDebounce(calculatedViewState, 100);
+
+  useEffect(() => {
+    viewStateHandler(debouncedViewState);
+  }, [debouncedViewState]);
 
   return (
     <ReactMap
-      initialViewState={{
-        longitude: lng,
-        latitude: lat,
-        zoom: 4,
-      }}
+      initialViewState={initialViewState.current}
       ref={mapRef}
-      onMove={(e: any) => stateHandler(e.viewState)}
-      style={{
-        maxWidth: "100%",
-        width: "100%",
-        minWidth: "100%",
-        minHeight: "100px",
-        flexGrow: "1",
-      }}
+      onMove={stateHandler}
+      style={style.current}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
       // maxBounds={bounds}
       maxZoom={18}
       minZoom={3}
     >
-      {children}
+      {markers}
     </ReactMap>
   );
 };

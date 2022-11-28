@@ -1,16 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { BottomSheet } from "react-spring-bottom-sheet";
 
-import {
-  PropertyFilter,
-  PropertyList,
-  MapComponent,
-  Markers,
-} from "../components";
+import { PropertyFilter, PropertyList, MapComponent } from "../components";
 import { Coordinates, MANILA_LATITUDE, MANILA_LONGITUDE } from "../constants";
 import { useDebounce } from "../utils/hooks";
 import { calculateGeohashPrecision, useScreenSize } from "../utils";
@@ -26,15 +21,18 @@ export const getUserAddress = (
   });
 };
 
-const MapPage = () => {
+function MapPage(): JSX.Element {
   const [viewState, setViewState] = useState<any>();
-  const debouncedViewingArea = useDebounce(viewState, 500);
+  const debouncedViewingArea = useDebounce(viewState, 400);
   const {
     response: nearestProperties,
     isLoading: isFetchingNearProperties,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
-  const debouncedNearProperties = useDebounce(nearestProperties, 500);
+  const memoizedProperties = useMemo<any>(() => {
+    console.log(nearestProperties);
+    return nearestProperties;
+  }, [nearestProperties]);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
@@ -134,11 +132,7 @@ const MapPage = () => {
             {!isFetchingNearProperties && (
               <PropertyList
                 itemsPerPage={20}
-                properties={
-                  (debouncedNearProperties as any)
-                    ? (debouncedNearProperties as any).results
-                    : []
-                }
+                properties={memoizedProperties?.results ?? []}
                 onHover={onPropertyHover}
               />
             )}
@@ -172,15 +166,10 @@ const MapPage = () => {
               viewStateHandler={(viewStateEventPayload) =>
                 setViewState(viewStateEventPayload)
               }
-            >
-              {Markers(
-                openPropertyDetails,
-                (debouncedNearProperties as any)
-                  ? (debouncedNearProperties as any).results
-                  : [],
-                activeProperty
-              )}
-            </MapComponent>
+              onClick={openPropertyDetails}
+              properties={memoizedProperties}
+              activeProperty={activeProperty}
+            />
           </Box>
         </Grid>
       </Grid>
@@ -213,11 +202,7 @@ const MapPage = () => {
             {!isFetchingNearProperties && (
               <PropertyList
                 itemsPerPage={20}
-                properties={
-                  (debouncedNearProperties as any)
-                    ? (debouncedNearProperties as any).results
-                    : []
-                }
+                properties={memoizedProperties?.results ?? []}
                 onHover={onPropertyHover}
               />
             )}
@@ -226,6 +211,6 @@ const MapPage = () => {
       </Box>
     </div>
   );
-};
+}
 
 export { MapPage };
