@@ -1,13 +1,28 @@
-import * as React from "react";
+import { useState } from "react";
 import Grid from "@mui/material/Grid";
+import ReactPaginate from "react-paginate";
 
 import { PropertyDetailCard } from "../components";
 
 export const PropertyList: React.FC<{
   properties: Array<any>;
   onHover: (property: any) => void;
+  itemsPerPage: number;
 }> = (props) => {
-  const { properties, onHover } = props;
+  const { properties, onHover, itemsPerPage } = props;
+  const [itemOffset, setItemOffset] = useState(0);
+  const endOffset = itemOffset + itemsPerPage;
+  const currentItems = properties.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(properties.length / itemsPerPage);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event: any) => {
+    const newOffset = (event.selected * itemsPerPage) % properties.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
 
   const visitProperty = (propertyId: string) => {
     window.open(`/properties/${propertyId}`, "_blank");
@@ -47,6 +62,14 @@ export const PropertyList: React.FC<{
           </Grid>
         );
       })}
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={20}
+        pageCount={pageCount}
+        previousLabel="< previous"
+      />
     </Grid>
   );
 };

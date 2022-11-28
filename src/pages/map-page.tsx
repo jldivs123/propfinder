@@ -133,6 +133,7 @@ const MapPage = () => {
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
+                itemsPerPage={20}
                 properties={
                   (debouncedNearProperties as any)
                     ? (debouncedNearProperties as any).results
@@ -211,6 +212,7 @@ const MapPage = () => {
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
+                itemsPerPage={20}
                 properties={
                   (debouncedNearProperties as any)
                     ? (debouncedNearProperties as any).results

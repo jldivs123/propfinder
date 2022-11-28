@@ -98,7 +98,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       }}
       className="h-full w-80 group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >
-      <CardActionArea>
+      <CardActionArea component="span">
         {!imgUrls && !isLoading && CardImagePlaceholder(onClick)}
         {imgUrls && !isLoading && (
           <CardMedia
