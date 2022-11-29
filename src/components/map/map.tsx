@@ -4,7 +4,7 @@ import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 import Typography from "@mui/material/Typography";
 
 import { MAPBOX_PUBLIC_TOKEN, Coordinates } from "../../constants";
-import { useDebounce } from "../../utils/hooks";
+import { calculateGeohashPrecision, useDebounce } from "../../utils";
 
 export const MapComponent: FC<
   Coordinates & {
@@ -17,8 +17,13 @@ export const MapComponent: FC<
   // * Philippine Area of Responsibility
   const mapRef = useRef<MapRef | null>(null);
   const style = useRef<any>();
-  const initialViewState = useRef<any>();
+  const initialViewState = useRef<any>({
+    longitude: lng,
+    latitude: lat,
+    zoom: 4,
+  });
   const [viewState, setViewState] = useState<any>();
+  const debouncedViewState = useDebounce(viewState, 500);
   const [calculatedViewState, setCalculatedViewState] = useState<any>();
   const stateHandler = useCallback((value: any) => {
     setViewState(value.viewState);
@@ -33,17 +38,12 @@ export const MapComponent: FC<
       minHeight: "100px",
       flexGrow: "1",
     };
-    initialViewState.current = {
-      longitude: lng,
-      latitude: lat,
-      zoom: 4,
-    };
   }, []);
 
   const markers = useMemo(() => {
-    if (properties && properties.results) {
-      const propResults = properties.results;
-      return propResults.map((property: any, index: number) => {
+    if (properties) {
+      return properties.map((property: any, index: number) => {
+        const onClickHandler = () => onClick(property);
         const latitude = property.geojson.geometry.coordinates[0];
         const longitude = property.geojson.geometry.coordinates[1];
         const price =
@@ -59,7 +59,7 @@ export const MapComponent: FC<
           >
             <div
               className="flex justify-center items-center shadow-lg rounded-2xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
-              onClick={() => onClick(property)}
+              onClick={onClickHandler}
               style={{
                 width: "64px",
                 background:
@@ -104,19 +104,26 @@ export const MapComponent: FC<
         },
       });
     }
-  }, [viewState]);
-
-  const debouncedViewState = useDebounce(calculatedViewState, 100);
-
-  useEffect(() => {
-    viewStateHandler(debouncedViewState);
   }, [debouncedViewState]);
+
+  useMemo(() => {
+    if (calculatedViewState) {
+      const { area, center } = calculatedViewState;
+      const precision = calculateGeohashPrecision(area);
+      // ! For some reason, they are reversed
+      viewStateHandler({
+        lat: center.longitude,
+        lng: center.latitude,
+        precision,
+      });
+    }
+  }, [calculatedViewState, viewStateHandler]);
 
   return (
     <ReactMap
       initialViewState={initialViewState.current}
       ref={mapRef}
-      onMove={stateHandler}
+      onMoveEnd={stateHandler}
       style={style.current}
       mapStyle="mapbox://styles/mapbox/light-v10"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}

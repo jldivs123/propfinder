@@ -7,8 +7,7 @@ import { BottomSheet } from "react-spring-bottom-sheet";
 
 import { PropertyFilter, PropertyList, MapComponent } from "../components";
 import { Coordinates, MANILA_LATITUDE, MANILA_LONGITUDE } from "../constants";
-import { useDebounce } from "../utils/hooks";
-import { calculateGeohashPrecision, useScreenSize } from "../utils";
+import { useScreenSize } from "../utils";
 import { getNearestProperties } from "../lib/apis";
 
 export const getUserAddress = (
@@ -22,16 +21,13 @@ export const getUserAddress = (
 };
 
 function MapPage(): JSX.Element {
-  const [viewState, setViewState] = useState<any>();
-  const debouncedViewingArea = useDebounce(viewState, 400);
   const {
     response: nearestProperties,
     isLoading: isFetchingNearProperties,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
   const memoizedProperties = useMemo<any>(() => {
-    console.log(nearestProperties);
-    return nearestProperties;
+    return (nearestProperties as any)?.results ?? [];
   }, [nearestProperties]);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
@@ -53,19 +49,6 @@ function MapPage(): JSX.Element {
       options
     );
   }, []);
-
-  useEffect(() => {
-    if (debouncedViewingArea) {
-      const { area, center } = debouncedViewingArea;
-      const precision = calculateGeohashPrecision(area);
-      // ! For some reason, they are reversed
-      fetchNearProperties({
-        lat: center.longitude,
-        lng: center.latitude,
-        precision,
-      });
-    }
-  }, [debouncedViewingArea]);
 
   useEffect(() => {
     fetchNearProperties({
@@ -132,7 +115,7 @@ function MapPage(): JSX.Element {
             {!isFetchingNearProperties && (
               <PropertyList
                 itemsPerPage={20}
-                properties={memoizedProperties?.results ?? []}
+                properties={memoizedProperties}
                 onHover={onPropertyHover}
               />
             )}
@@ -163,9 +146,7 @@ function MapPage(): JSX.Element {
             <MapComponent
               lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
               lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
-              viewStateHandler={(viewStateEventPayload) =>
-                setViewState(viewStateEventPayload)
-              }
+              viewStateHandler={fetchNearProperties}
               onClick={openPropertyDetails}
               properties={memoizedProperties}
               activeProperty={activeProperty}
@@ -202,7 +183,7 @@ function MapPage(): JSX.Element {
             {!isFetchingNearProperties && (
               <PropertyList
                 itemsPerPage={20}
-                properties={memoizedProperties?.results ?? []}
+                properties={memoizedProperties}
                 onHover={onPropertyHover}
               />
             )}

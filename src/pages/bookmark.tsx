@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -13,10 +12,6 @@ import { db } from "../lib/db";
 export const BookMarkPage = () => {
   const bookmarkedProperties = useLiveQuery(() => db.savedProperties.toArray());
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log(bookmarkedProperties);
-  }, [bookmarkedProperties]);
 
   return (
     <Container
