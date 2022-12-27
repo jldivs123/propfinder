@@ -125,9 +125,8 @@ export const MapComponent: FC<
       ref={mapRef}
       onMoveEnd={stateHandler}
       style={style.current}
-      mapStyle="mapbox://styles/mapbox/light-v10"
+      mapStyle="mapbox://styles/mapbox/streets-v12"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-      // maxBounds={bounds}
       maxZoom={18}
       minZoom={3}
     >
