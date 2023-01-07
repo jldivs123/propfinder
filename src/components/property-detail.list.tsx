@@ -8,9 +8,19 @@ import { PropertyDetailCard } from "../components";
 export const PropertyList: React.FC<{
   properties: Array<any>;
   onHover: (property: any) => void;
-  itemsPerPage: number;
+  disablePrevButton: boolean;
+  disableNextButton: boolean;
+  handleNextButtonClicked?: () => void;
+  handlePreviousButtonClicked?: () => void;
 }> = (props) => {
-  const { properties, onHover, itemsPerPage } = props;
+  const {
+    properties,
+    onHover,
+    disablePrevButton,
+    disableNextButton,
+    handleNextButtonClicked,
+    handlePreviousButtonClicked,
+  } = props;
   const visitProperty = (propertyId: string) => {
     window.open(`/properties/${propertyId}`, "_blank");
   };
@@ -45,7 +55,7 @@ export const PropertyList: React.FC<{
             return (
               <Grid
                 item
-                xs={6}
+                xs={12}
                 xl={4}
                 container
                 justifyContent="center"
@@ -72,14 +82,18 @@ export const PropertyList: React.FC<{
         <Button
           color="primary"
           aria-label="previous"
+          onClick={handlePreviousButtonClicked}
           startIcon={<NavigateBeforeIcon />}
+          disabled={disablePrevButton}
         >
           Previous
         </Button>
         <Button
           color="primary"
           aria-label="next"
+          onClick={handleNextButtonClicked}
           endIcon={<NavigateNextIcon />}
+          disabled={disableNextButton}
         >
           Next
         </Button>

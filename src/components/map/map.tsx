@@ -41,7 +41,7 @@ export const MapComponent: FC<
   }, []);
 
   const markers = useMemo(() => {
-    if (properties) {
+    if (properties && properties.length) {
       return properties.map((property: any, index: number) => {
         const onClickHandler = () => onClick(property);
         const latitude = property.geojson.geometry.coordinates[0];

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Grid from "@mui/material/Grid";
@@ -20,35 +20,75 @@ export const getUserAddress = (
   });
 };
 
+interface PROPERTIES_RESULT_SCHEMA {
+  results: Array<any>;
+  lastKey?: null | { [key: string]: any };
+  length?: number;
+}
+
+const OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0,
+};
+
 function MapPage(): JSX.Element {
   const {
-    response: nearestProperties,
+    response: fetchedProperties,
     isLoading: isFetchingNearProperties,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
-  const memoizedProperties = useMemo<any>(() => {
-    return (nearestProperties as any)?.results ?? [];
-  }, [nearestProperties]);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
+  const [mapCenter, setMapCenter] = useState<any>();
+  const [lastPropertyKey, setLastPropertyKey] = useState<any>(null);
+  const mapCenterRef = useRef(mapCenter);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0,
-  };
+  // * nearProperties is 2D-array consisting of `page` and `properties` per
+  const [nearProperties, setNearProperties] = useState<Array<any>>([]);
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(0);
+  const [visibleProperties, setVisibleProperties] = useState<Array<any>>([]);
+
   const display = useScreenSize();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => getUserAddress(pos, setUserCoordinates),
       (err) => console.log(err),
-      options
+      OPTIONS
     );
   }, []);
+
+  // useEffect(() => {
+  //   console.log(nearProperties);
+  // }, [nearProperties]);
+
+  useEffect(() => {
+    if (fetchedProperties) {
+      const { results = [], lastKey = null } =
+        fetchedProperties as PROPERTIES_RESULT_SCHEMA;
+      setNearProperties([...nearProperties, results]);
+      setLastPropertyKey(lastKey);
+    }
+  }, [fetchedProperties]);
+
+  useEffect(() => {
+    if (nearProperties && currentPageNumber < nearProperties.length) {
+      setVisibleProperties(nearProperties[currentPageNumber]);
+    }
+  }, [currentPageNumber, nearProperties]);
+
+  useEffect(() => {
+    mapCenterRef.current = mapCenter;
+    // * Clear data
+    setLastPropertyKey(null);
+    setNearProperties([]);
+    setCurrentPageNumber(0);
+    setVisibleProperties([]);
+  }, [mapCenter]);
 
   useEffect(() => {
     fetchNearProperties({
@@ -63,9 +103,37 @@ function MapPage(): JSX.Element {
     setIsPropertyDrawerActive(true);
   };
 
-  const onPropertyHover = (property: any) => {
-    setActiveProperty(property);
-    setIsPropertyDrawerActive(true);
+  const onPropertyHover = useCallback(
+    (property: any) => {
+      setActiveProperty(property);
+      setIsPropertyDrawerActive(true);
+    },
+    [setActiveProperty, setIsPropertyDrawerActive]
+  );
+
+  const handleViewState = useCallback((val: any) => {
+    setMapCenter(val);
+    fetchNearProperties(val);
+    console.log(val);
+  }, []);
+
+  const handleNextButtonClicked = () => {
+    if (currentPageNumber < nearProperties.length) {
+      setCurrentPageNumber(currentPageNumber + 1);
+      if (lastPropertyKey) {
+        fetchNearProperties({
+          ...mapCenter,
+          lastKey: lastPropertyKey?.pk ?? null,
+          geohash: lastPropertyKey?.geohash ?? null,
+        });
+      }
+    }
+  };
+
+  const handlePreviousButtonClicked = () => {
+    if (currentPageNumber > 0) {
+      setCurrentPageNumber(currentPageNumber - 1);
+    }
   };
 
   return (
@@ -109,14 +177,20 @@ function MapPage(): JSX.Element {
                 ariaLabel="puff-loading"
                 wrapperStyle={{ marginTop: "50%" }}
                 wrapperClass="m-auto my-2"
-                visible={true}
+                visible
               />
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
-                itemsPerPage={20}
-                properties={memoizedProperties}
+                properties={visibleProperties}
                 onHover={onPropertyHover}
+                disableNextButton={
+                  currentPageNumber === nearProperties.length - 1 &&
+                  !lastPropertyKey
+                }
+                disablePrevButton={currentPageNumber === 0}
+                handleNextButtonClicked={handleNextButtonClicked}
+                handlePreviousButtonClicked={handlePreviousButtonClicked}
               />
             )}
           </PropertyFilter>
@@ -146,9 +220,9 @@ function MapPage(): JSX.Element {
             <MapComponent
               lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
               lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
-              viewStateHandler={fetchNearProperties}
+              viewStateHandler={handleViewState}
               onClick={openPropertyDetails}
-              properties={memoizedProperties}
+              properties={visibleProperties}
               activeProperty={activeProperty}
             />
           </Box>
@@ -182,8 +256,12 @@ function MapPage(): JSX.Element {
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
-                itemsPerPage={20}
-                properties={memoizedProperties}
+                disableNextButton={
+                  currentPageNumber === nearProperties.length - 1 &&
+                  !lastPropertyKey
+                }
+                disablePrevButton={currentPageNumber === 0}
+                properties={visibleProperties}
                 onHover={onPropertyHover}
               />
             )}
