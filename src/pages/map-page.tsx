@@ -26,6 +26,18 @@ interface PROPERTIES_RESULT_SCHEMA {
   length?: number;
 }
 
+interface MapCenter {
+  lat: number;
+  lng: number;
+  precision: number;
+}
+
+const DEFAULT_MAP_CENTER = {
+  lat: +MANILA_LATITUDE,
+  lng: +MANILA_LONGITUDE,
+  precision: 1,
+};
+
 const OPTIONS = {
   enableHighAccuracy: true,
   timeout: 5000,
@@ -41,9 +53,8 @@ function MapPage(): JSX.Element {
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
-  const [mapCenter, setMapCenter] = useState<any>();
   const [lastPropertyKey, setLastPropertyKey] = useState<any>(null);
-  const mapCenterRef = useRef(mapCenter);
+  const mapCenterRef = useRef(DEFAULT_MAP_CENTER);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -62,10 +73,6 @@ function MapPage(): JSX.Element {
     );
   }, []);
 
-  // useEffect(() => {
-  //   console.log(nearProperties);
-  // }, [nearProperties]);
-
   useEffect(() => {
     if (fetchedProperties) {
       const { results = [], lastKey = null } =
@@ -82,18 +89,9 @@ function MapPage(): JSX.Element {
   }, [currentPageNumber, nearProperties]);
 
   useEffect(() => {
-    mapCenterRef.current = mapCenter;
-    // * Clear data
-    setLastPropertyKey(null);
-    setNearProperties([]);
-    setCurrentPageNumber(0);
-    setVisibleProperties([]);
-  }, [mapCenter]);
-
-  useEffect(() => {
     fetchNearProperties({
-      lat: 14,
-      lng: 121,
+      lat: MANILA_LATITUDE,
+      lng: MANILA_LONGITUDE,
       precision: 1,
     });
   }, []);
@@ -103,26 +101,40 @@ function MapPage(): JSX.Element {
     setIsPropertyDrawerActive(true);
   };
 
-  const onPropertyHover = useCallback(
-    (property: any) => {
-      setActiveProperty(property);
-      setIsPropertyDrawerActive(true);
-    },
-    [setActiveProperty, setIsPropertyDrawerActive]
-  );
+  const onPropertyHover = useCallback((property: any) => {
+    setActiveProperty(property);
+    setIsPropertyDrawerActive(true);
+  }, []);
 
-  const handleViewState = useCallback((val: any) => {
-    setMapCenter(val);
+  const handleViewState = useCallback((val: MapCenter) => {
+    console.log("hello");
+    if (mapCenterRef.current) {
+      const { lat = null, lng = null, precision = 1 } = val;
+      const {
+        lat: latRef = null,
+        lng: lngRef = null,
+        precision: precisionRef = 1,
+      } = mapCenterRef.current;
+      if (lat !== latRef || lng !== lngRef || precision !== precisionRef) {
+        mapCenterRef.current = val;
+      }
+    } else {
+      mapCenterRef.current = val;
+    }
+    // * Clear data
+    setLastPropertyKey(null);
+    setNearProperties([]);
+    setCurrentPageNumber(0);
+    setVisibleProperties([]);
     fetchNearProperties(val);
-    console.log(val);
   }, []);
 
   const handleNextButtonClicked = () => {
     if (currentPageNumber < nearProperties.length) {
       setCurrentPageNumber(currentPageNumber + 1);
-      if (lastPropertyKey) {
+      if (lastPropertyKey && mapCenterRef.current) {
         fetchNearProperties({
-          ...mapCenter,
+          ...mapCenterRef.current,
           lastKey: lastPropertyKey?.pk ?? null,
           geohash: lastPropertyKey?.geohash ?? null,
         });

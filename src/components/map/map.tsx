@@ -23,8 +23,7 @@ export const MapComponent: FC<
     zoom: 4,
   });
   const [viewState, setViewState] = useState<any>();
-  const debouncedViewState = useDebounce(viewState, 500);
-  const [calculatedViewState, setCalculatedViewState] = useState<any>();
+  const debouncedViewState = useDebounce(viewState, 2000);
   const stateHandler = useCallback((value: any) => {
     setViewState(value.viewState);
   }, []);
@@ -93,31 +92,14 @@ export const MapComponent: FC<
       ];
       const area = convertArea(getAreaOfPolygon(polygon), "km2");
       const center = getCenterOfBounds(polygon);
-      setCalculatedViewState({
-        area,
-        center,
-        bounds: {
-          minLat: bounds._sw.lat,
-          maxLat: bounds._ne.lat,
-          minLng: bounds._sw.lng,
-          maxLng: bounds._ne.lng,
-        },
-      });
-    }
-  }, [debouncedViewState]);
-
-  useMemo(() => {
-    if (calculatedViewState) {
-      const { area, center } = calculatedViewState;
       const precision = calculateGeohashPrecision(area);
-      // ! For some reason, they are reversed
       viewStateHandler({
         lat: center.longitude,
         lng: center.latitude,
         precision,
       });
     }
-  }, [calculatedViewState, viewStateHandler]);
+  }, [debouncedViewState, viewStateHandler]);
 
   return (
     <ReactMap
@@ -125,7 +107,7 @@ export const MapComponent: FC<
       ref={mapRef}
       onMoveEnd={stateHandler}
       style={style.current}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
+      mapStyle="mapbox://styles/mapbox/light-v11"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
       maxZoom={18}
       minZoom={3}
