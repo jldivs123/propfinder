@@ -5,7 +5,6 @@ const Wrapper = styled.div<FC>`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  border: 2px solid blue;
   min-height: 90vh;
 `;
 

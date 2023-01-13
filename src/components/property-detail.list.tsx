@@ -73,12 +73,7 @@ export const PropertyList: React.FC<{
             );
           })}
       </Grid>
-      <Grid
-        item
-        container
-        justifyContent="center"
-        className="border border-red-600 grow-0 shrink-0"
-      >
+      <Grid item container justifyContent="center" className="grow-0 shrink-0">
         <Button
           color="primary"
           aria-label="previous"

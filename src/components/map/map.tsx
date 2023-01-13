@@ -12,21 +12,30 @@ export const MapComponent: FC<
     onClick: any;
     properties: any;
     activeProperty: any;
+    mapRef: any;
   }
-> = ({ lat, lng, viewStateHandler, onClick, properties, activeProperty }) => {
+> = ({
+  lat,
+  lng,
+  viewStateHandler,
+  onClick,
+  properties,
+  activeProperty,
+  mapRef,
+}) => {
   // * Philippine Area of Responsibility
-  const mapRef = useRef<MapRef | null>(null);
+  // const mapRef = useRef<MapRef | null>(null);
   const style = useRef<any>();
   const initialViewState = useRef<any>({
     longitude: lng,
     latitude: lat,
     zoom: 4,
   });
-  const [viewState, setViewState] = useState<any>();
-  const debouncedViewState = useDebounce(viewState, 2000);
-  const stateHandler = useCallback((value: any) => {
-    setViewState(value.viewState);
-  }, []);
+  // const [viewState, setViewState] = useState<any>();
+  // const debouncedViewState = useDebounce(viewState, 500);
+  // const stateHandler = useCallback((value: any) => {
+  // setViewState(value.viewState);
+  // }, []);
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
 
   useEffect(() => {
@@ -79,33 +88,35 @@ export const MapComponent: FC<
     }
   }, [properties]);
 
-  useMemo(() => {
-    const map = mapRef.current;
-    if (map) {
-      const bounds: any = map.getMap()?.getBounds();
-      // * `polygon` variable represents the rectangular area
-      const polygon: any = [
-        [bounds._ne.lat, bounds._sw.lng],
-        [bounds._ne.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._sw.lng],
-      ];
-      const area = convertArea(getAreaOfPolygon(polygon), "km2");
-      const center = getCenterOfBounds(polygon);
-      const precision = calculateGeohashPrecision(area);
-      viewStateHandler({
-        lat: center.longitude,
-        lng: center.latitude,
-        precision,
-      });
-    }
-  }, [debouncedViewState, viewStateHandler]);
+  // useEffect(())
+
+  // useMemo(() => {
+  //   const map = mapRef.current;
+  //   if (map) {
+  //     const bounds: any = map.getMap()?.getBounds();
+  //     // * `polygon` variable represents the rectangular area
+  //     const polygon: any = [
+  //       [bounds._ne.lat, bounds._sw.lng],
+  //       [bounds._ne.lat, bounds._ne.lng],
+  //       [bounds._sw.lat, bounds._ne.lng],
+  //       [bounds._sw.lat, bounds._sw.lng],
+  //     ];
+  //     const area = convertArea(getAreaOfPolygon(polygon), "km2");
+  //     const center = getCenterOfBounds(polygon);
+  //     const precision = calculateGeohashPrecision(area);
+  //     viewStateHandler({
+  //       lat: center.longitude,
+  //       lng: center.latitude,
+  //       precision,
+  //     });
+  //   }
+  // }, [viewStateHandler]);
 
   return (
     <ReactMap
       initialViewState={initialViewState.current}
       ref={mapRef}
-      onMoveEnd={stateHandler}
+      onMoveEnd={viewStateHandler}
       style={style.current}
       mapStyle="mapbox://styles/mapbox/light-v11"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}

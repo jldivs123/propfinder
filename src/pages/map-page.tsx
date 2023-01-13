@@ -3,11 +3,18 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { MapRef } from "react-map-gl";
 import { BottomSheet } from "react-spring-bottom-sheet";
+import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 
 import { PropertyFilter, PropertyList, MapComponent } from "../components";
 import { Coordinates, MANILA_LATITUDE, MANILA_LONGITUDE } from "../constants";
-import { useScreenSize } from "../utils";
+import {
+  useScreenSize,
+  useDebounce,
+  useFirstRender,
+  calculateGeohashPrecision,
+} from "../utils";
 import { getNearestProperties } from "../lib/apis";
 
 export const getUserAddress = (
@@ -24,12 +31,6 @@ interface PROPERTIES_RESULT_SCHEMA {
   results: Array<any>;
   lastKey?: null | { [key: string]: any };
   length?: number;
-}
-
-interface MapCenter {
-  lat: number;
-  lng: number;
-  precision: number;
 }
 
 const DEFAULT_MAP_CENTER = {
@@ -62,9 +63,14 @@ function MapPage(): JSX.Element {
   const [nearProperties, setNearProperties] = useState<Array<any>>([]);
   const [currentPageNumber, setCurrentPageNumber] = useState<number>(0);
   const [visibleProperties, setVisibleProperties] = useState<Array<any>>([]);
+  const [viewState, setViewState] = useState<any>(DEFAULT_MAP_CENTER);
+  const mapRef = useRef<MapRef | null>(null);
 
+  const debouncedViewState = useDebounce(viewState, 500);
   const display = useScreenSize();
+  const isFirstRender = useFirstRender();
 
+  // * Ask for user's location
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => getUserAddress(pos, setUserCoordinates),
@@ -73,6 +79,7 @@ function MapPage(): JSX.Element {
     );
   }, []);
 
+  // * Get nearest properties & add to `nearProperties` 2D-array + set the lastKey
   useEffect(() => {
     if (fetchedProperties) {
       const { results = [], lastKey = null } =
@@ -106,35 +113,57 @@ function MapPage(): JSX.Element {
     setIsPropertyDrawerActive(true);
   }, []);
 
-  const handleViewState = useCallback((val: MapCenter) => {
-    console.log("hello");
-    if (mapCenterRef.current) {
-      const { lat = null, lng = null, precision = 1 } = val;
-      const {
-        lat: latRef = null,
-        lng: lngRef = null,
-        precision: precisionRef = 1,
-      } = mapCenterRef.current;
-      if (lat !== latRef || lng !== lngRef || precision !== precisionRef) {
-        mapCenterRef.current = val;
+  const handleViewState = useCallback(
+    (val: any) => {
+      const map = mapRef.current;
+      if (map) {
+        const bounds: any = map.getMap()?.getBounds();
+        // * `polygon` variable represents the rectangular area
+        const polygon: any = [
+          [bounds._ne.lat, bounds._sw.lng],
+          [bounds._ne.lat, bounds._ne.lng],
+          [bounds._sw.lat, bounds._ne.lng],
+          [bounds._sw.lat, bounds._sw.lng],
+        ];
+        const area = convertArea(getAreaOfPolygon(polygon), "km2");
+        const center = getCenterOfBounds(polygon);
+        const precision = calculateGeohashPrecision(area);
+        setViewState({
+          lat: center.longitude,
+          lng: center.latitude,
+          precision,
+        });
       }
-    } else {
-      mapCenterRef.current = val;
+    },
+    [setViewState]
+  );
+
+  useEffect(() => {}, [viewState]);
+
+  useEffect(() => {
+    console.log("sweet dreams are made of cheese");
+    if (debouncedViewState && !isFirstRender) {
+      const { lat, lng, precision } = debouncedViewState;
+      // * Clear data
+      setLastPropertyKey(null);
+      setNearProperties([]);
+      setCurrentPageNumber(0);
+      setVisibleProperties([]);
+      // * Call nearest properties API
+      fetchNearProperties({
+        lat,
+        lng,
+        precision,
+      });
     }
-    // * Clear data
-    setLastPropertyKey(null);
-    setNearProperties([]);
-    setCurrentPageNumber(0);
-    setVisibleProperties([]);
-    fetchNearProperties(val);
-  }, []);
+  }, [debouncedViewState]);
 
   const handleNextButtonClicked = () => {
     if (currentPageNumber < nearProperties.length) {
       setCurrentPageNumber(currentPageNumber + 1);
-      if (lastPropertyKey && mapCenterRef.current) {
+      if (lastPropertyKey && debouncedViewState) {
         fetchNearProperties({
-          ...mapCenterRef.current,
+          ...debouncedViewState,
           lastKey: lastPropertyKey?.pk ?? null,
           geohash: lastPropertyKey?.geohash ?? null,
         });
@@ -236,6 +265,7 @@ function MapPage(): JSX.Element {
               onClick={openPropertyDetails}
               properties={visibleProperties}
               activeProperty={activeProperty}
+              mapRef={mapRef}
             />
           </Box>
         </Grid>
