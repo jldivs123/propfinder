@@ -36,7 +36,7 @@ export function DetailHeader(property: any) {
         sx={{ maxHeight: "480px" }}
         className=""
         image="/undraw_for_sale_re_egkk.svg"
-        alt="homer-property-images"
+        alt="homepage-property-images"
       />
       <CardContent>
         <Typography

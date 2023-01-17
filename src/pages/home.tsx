@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 
 export function HomePage() {
@@ -69,7 +70,67 @@ export function HomePage() {
             md={6}
             display={{ sm: "block", xs: "block", md: "block" }}
           >
-            <img src="/undraw_choosing_house_re_1rv7.svg" alt="homer-image" />
+            <img
+              src="/undraw_choosing_house_re_1rv7.svg"
+              alt="homepage-image"
+            />
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          container
+          direction="row"
+          className="w-6/12"
+          spacing={4}
+          sx={{ marginTop: "1.5rem", width: "50%" }}
+        >
+          <Grid item xs={4}>
+            <Box>
+              <Typography
+                variant="h4"
+                component="div"
+                color="primary"
+                fontWeight={600}
+                align="center"
+              >
+                2,000+
+              </Typography>
+              <Typography variant="body2" align="center">
+                Properties listed
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box>
+              <Typography
+                variant="h4"
+                component="div"
+                color="primary"
+                fontWeight={600}
+                align="center"
+              >
+                100%
+              </Typography>
+              <Typography variant="body2" align="center">
+                Free
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box>
+              <Typography
+                variant="h4"
+                component="div"
+                color="primary"
+                fontWeight={600}
+                align="center"
+              >
+                Automatic
+              </Typography>
+              <Typography variant="body2" align="center">
+                Updates
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
       </Stack>

@@ -25,6 +25,7 @@
     "react-dom": "^17.0.2",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.3.3",
+    "react-loading-skeleton": "^3.1.0",
     "react-map-gl": "^7.0.1",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.2.1",
@@ -54,6 +55,8 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.7",
+    "@types/react-window": "^1.8.5",
+    "@types/react-window-infinite-loader": "^1.0.6",
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.5",
     "typescript": "^4.5.5"

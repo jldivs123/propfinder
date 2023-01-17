@@ -1,22 +1,57 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useMemo, useState, useCallback, useEffect } from "react";
 import ReactMap, { Marker, MapRef } from "react-map-gl";
 import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
-import { LngLatBounds, LngLat } from "mapbox-gl";
 import Typography from "@mui/material/Typography";
 
 import { MAPBOX_PUBLIC_TOKEN, Coordinates } from "../../constants";
+import { calculateGeohashPrecision, useDebounce } from "../../utils";
 
-// * https://github.com/visgl/react-map-gl/issues/750
-export const Markers = (
-  onClick: (args: any) => any,
-  properties: any,
-  activeProperty: any
-) => {
+export const MapComponent: FC<
+  Coordinates & {
+    viewStateHandler: (value: any) => void;
+    onClick: any;
+    properties: any;
+    activeProperty: any;
+    mapRef: any;
+  }
+> = ({
+  lat,
+  lng,
+  viewStateHandler,
+  onClick,
+  properties,
+  activeProperty,
+  mapRef,
+}) => {
+  // * Philippine Area of Responsibility
+  // const mapRef = useRef<MapRef | null>(null);
+  const style = useRef<any>();
+  const initialViewState = useRef<any>({
+    longitude: lng,
+    latitude: lat,
+    zoom: 4,
+  });
+  // const [viewState, setViewState] = useState<any>();
+  // const debouncedViewState = useDebounce(viewState, 500);
+  // const stateHandler = useCallback((value: any) => {
+  // setViewState(value.viewState);
+  // }, []);
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
 
-  return (
-    <>
-      {properties.map((property: any, index: number) => {
+  useEffect(() => {
+    style.current = {
+      maxWidth: "100%",
+      width: "100%",
+      minWidth: "100%",
+      minHeight: "100px",
+      flexGrow: "1",
+    };
+  }, []);
+
+  const markers = useMemo(() => {
+    if (properties && properties.length) {
+      return properties.map((property: any, index: number) => {
+        const onClickHandler = () => onClick(property);
         const latitude = property.geojson.geometry.coordinates[0];
         const longitude = property.geojson.geometry.coordinates[1];
         const price =
@@ -32,7 +67,7 @@ export const Markers = (
           >
             <div
               className="flex justify-center items-center shadow-lg rounded-2xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
-              onClick={() => onClick(property)}
+              onClick={onClickHandler}
               style={{
                 width: "64px",
                 background:
@@ -47,69 +82,48 @@ export const Markers = (
             </div>
           </Marker>
         );
-      })}
-    </>
-  );
-};
-
-export const MapComponent: FC<
-  Coordinates & { viewStateHandler: (value: any) => void }
-> = ({ children, lat, lng, viewStateHandler }) => {
-  // * Philippine Area of Responsibility
-  const southWest = new LngLat(114.873046875, 5.090944175033399);
-  const northEast = new LngLat(128.4521484375, 20.014645445341365);
-  const bounds = new LngLatBounds(southWest, northEast);
-  const mapRef = useRef<MapRef | null>(null);
-
-  const stateHandler = (value: any) => {
-    const map = mapRef.current;
-    if (map) {
-      const bounds: any = map.getMap()?.getBounds();
-      // * `polygon` variable represents the rectangular area
-      const polygon: any = [
-        [bounds._ne.lat, bounds._sw.lng],
-        [bounds._ne.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._ne.lng],
-        [bounds._sw.lat, bounds._sw.lng],
-      ];
-      const area = convertArea(getAreaOfPolygon(polygon), "km2");
-      const center = getCenterOfBounds(polygon);
-      viewStateHandler({
-        area,
-        center,
-        bounds: {
-          minLat: bounds._sw.lat,
-          maxLat: bounds._ne.lat,
-          minLng: bounds._sw.lng,
-          maxLng: bounds._ne.lng,
-        },
       });
+    } else {
+      return <></>;
     }
-  };
+  }, [properties]);
+
+  // useEffect(())
+
+  // useMemo(() => {
+  //   const map = mapRef.current;
+  //   if (map) {
+  //     const bounds: any = map.getMap()?.getBounds();
+  //     // * `polygon` variable represents the rectangular area
+  //     const polygon: any = [
+  //       [bounds._ne.lat, bounds._sw.lng],
+  //       [bounds._ne.lat, bounds._ne.lng],
+  //       [bounds._sw.lat, bounds._ne.lng],
+  //       [bounds._sw.lat, bounds._sw.lng],
+  //     ];
+  //     const area = convertArea(getAreaOfPolygon(polygon), "km2");
+  //     const center = getCenterOfBounds(polygon);
+  //     const precision = calculateGeohashPrecision(area);
+  //     viewStateHandler({
+  //       lat: center.longitude,
+  //       lng: center.latitude,
+  //       precision,
+  //     });
+  //   }
+  // }, [viewStateHandler]);
 
   return (
     <ReactMap
-      initialViewState={{
-        longitude: lng,
-        latitude: lat,
-        zoom: 4,
-      }}
+      initialViewState={initialViewState.current}
       ref={mapRef}
-      onMove={(e: any) => stateHandler(e.viewState)}
-      style={{
-        maxWidth: "100%",
-        width: "100%",
-        minWidth: "100%",
-        minHeight: "100px",
-        flexGrow: "1",
-      }}
-      mapStyle="mapbox://styles/mapbox/light-v10"
+      onMoveEnd={viewStateHandler}
+      style={style.current}
+      mapStyle="mapbox://styles/mapbox/light-v11"
       mapboxAccessToken={MAPBOX_PUBLIC_TOKEN}
-      // maxBounds={bounds}
       maxZoom={18}
       minZoom={3}
     >
-      {children}
+      {markers}
     </ReactMap>
   );
 };

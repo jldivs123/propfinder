@@ -134,7 +134,7 @@ const ResponsiveAppBar = () => {
                 fontWeight="800"
                 sx={{ textTransform: "lowercase" }}
               >
-                homer.
+                homepage.
               </Typography>
             </Button>
           </Box>

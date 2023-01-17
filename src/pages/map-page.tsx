@@ -1,19 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Puff } from "react-loader-spinner";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { MapRef } from "react-map-gl";
 import { BottomSheet } from "react-spring-bottom-sheet";
+import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
 
-import {
-  PropertyFilter,
-  PropertyList,
-  MapComponent,
-  Markers,
-} from "../components";
+import { PropertyFilter, PropertyList, MapComponent } from "../components";
 import { Coordinates, MANILA_LATITUDE, MANILA_LONGITUDE } from "../constants";
-import { useDebounce } from "../utils/hooks";
-import { calculateGeohashPrecision, useScreenSize } from "../utils";
+import {
+  useScreenSize,
+  useDebounce,
+  useFirstRender,
+  calculateGeohashPrecision,
+} from "../utils";
 import { getNearestProperties } from "../lib/apis";
 
 export const getUserAddress = (
@@ -26,53 +27,78 @@ export const getUserAddress = (
   });
 };
 
-const MapPage = () => {
-  const [viewState, setViewState] = useState<any>();
-  const debouncedViewingArea = useDebounce(viewState, 500);
+interface PROPERTIES_RESULT_SCHEMA {
+  results: Array<any>;
+  lastKey?: null | { [key: string]: any };
+  length?: number;
+}
+
+const DEFAULT_MAP_CENTER = {
+  lat: +MANILA_LATITUDE,
+  lng: +MANILA_LONGITUDE,
+  precision: 1,
+};
+
+const OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0,
+};
+
+function MapPage(): JSX.Element {
   const {
-    response: nearestProperties,
+    response: fetchedProperties,
     isLoading: isFetchingNearProperties,
     invokeApi: fetchNearProperties,
   } = getNearestProperties();
-  const debouncedNearProperties = useDebounce(nearestProperties, 500);
   const [isPropertyModalActive, setIsPropertyDrawerActive] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
+  const [lastPropertyKey, setLastPropertyKey] = useState<any>(null);
+  const mapCenterRef = useRef(DEFAULT_MAP_CENTER);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0,
-  };
-  const display = useScreenSize();
+  // * nearProperties is 2D-array consisting of `page` and `properties` per
+  const [nearProperties, setNearProperties] = useState<Array<any>>([]);
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(0);
+  const [visibleProperties, setVisibleProperties] = useState<Array<any>>([]);
+  const [viewState, setViewState] = useState<any>(DEFAULT_MAP_CENTER);
+  const mapRef = useRef<MapRef | null>(null);
 
+  const debouncedViewState = useDebounce(viewState, 500);
+  const display = useScreenSize();
+  const isFirstRender = useFirstRender();
+
+  // * Ask for user's location
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => getUserAddress(pos, setUserCoordinates),
       (err) => console.log(err),
-      options
+      OPTIONS
     );
   }, []);
 
+  // * Get nearest properties & add to `nearProperties` 2D-array + set the lastKey
   useEffect(() => {
-    if (debouncedViewingArea) {
-      const { area, center } = debouncedViewingArea;
-      const precision = calculateGeohashPrecision(area);
-      // ! For some reason, they are reversed
-      fetchNearProperties({
-        lat: center.longitude,
-        lng: center.latitude,
-        precision,
-      });
+    if (fetchedProperties) {
+      const { results = [], lastKey = null } =
+        fetchedProperties as PROPERTIES_RESULT_SCHEMA;
+      setNearProperties([...nearProperties, results]);
+      setLastPropertyKey(lastKey);
     }
-  }, [debouncedViewingArea]);
+  }, [fetchedProperties]);
+
+  useEffect(() => {
+    if (nearProperties && currentPageNumber < nearProperties.length) {
+      setVisibleProperties(nearProperties[currentPageNumber]);
+    }
+  }, [currentPageNumber, nearProperties]);
 
   useEffect(() => {
     fetchNearProperties({
-      lat: 14,
-      lng: 121,
+      lat: MANILA_LATITUDE,
+      lng: MANILA_LONGITUDE,
       precision: 1,
     });
   }, []);
@@ -82,9 +108,73 @@ const MapPage = () => {
     setIsPropertyDrawerActive(true);
   };
 
-  const onPropertyHover = (property: any) => {
+  const onPropertyHover = useCallback((property: any) => {
     setActiveProperty(property);
     setIsPropertyDrawerActive(true);
+  }, []);
+
+  const handleViewState = useCallback(
+    (val: any) => {
+      const map = mapRef.current;
+      if (map) {
+        const bounds: any = map.getMap()?.getBounds();
+        // * `polygon` variable represents the rectangular area
+        const polygon: any = [
+          [bounds._ne.lat, bounds._sw.lng],
+          [bounds._ne.lat, bounds._ne.lng],
+          [bounds._sw.lat, bounds._ne.lng],
+          [bounds._sw.lat, bounds._sw.lng],
+        ];
+        const area = convertArea(getAreaOfPolygon(polygon), "km2");
+        const center = getCenterOfBounds(polygon);
+        const precision = calculateGeohashPrecision(area);
+        setViewState({
+          lat: center.longitude,
+          lng: center.latitude,
+          precision,
+        });
+      }
+    },
+    [setViewState]
+  );
+
+  useEffect(() => {}, [viewState]);
+
+  useEffect(() => {
+    console.log("sweet dreams are made of cheese");
+    if (debouncedViewState && !isFirstRender) {
+      const { lat, lng, precision } = debouncedViewState;
+      // * Clear data
+      setLastPropertyKey(null);
+      setNearProperties([]);
+      setCurrentPageNumber(0);
+      setVisibleProperties([]);
+      // * Call nearest properties API
+      fetchNearProperties({
+        lat,
+        lng,
+        precision,
+      });
+    }
+  }, [debouncedViewState]);
+
+  const handleNextButtonClicked = () => {
+    if (currentPageNumber < nearProperties.length) {
+      setCurrentPageNumber(currentPageNumber + 1);
+      if (lastPropertyKey && debouncedViewState) {
+        fetchNearProperties({
+          ...debouncedViewState,
+          lastKey: lastPropertyKey?.pk ?? null,
+          geohash: lastPropertyKey?.geohash ?? null,
+        });
+      }
+    }
+  };
+
+  const handlePreviousButtonClicked = () => {
+    if (currentPageNumber > 0) {
+      setCurrentPageNumber(currentPageNumber - 1);
+    }
   };
 
   return (
@@ -128,17 +218,20 @@ const MapPage = () => {
                 ariaLabel="puff-loading"
                 wrapperStyle={{ marginTop: "50%" }}
                 wrapperClass="m-auto my-2"
-                visible={true}
+                visible
               />
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
-                properties={
-                  (debouncedNearProperties as any)
-                    ? (debouncedNearProperties as any).results
-                    : []
-                }
+                properties={visibleProperties}
                 onHover={onPropertyHover}
+                disableNextButton={
+                  currentPageNumber === nearProperties.length - 1 &&
+                  !lastPropertyKey
+                }
+                disablePrevButton={currentPageNumber === 0}
+                handleNextButtonClicked={handleNextButtonClicked}
+                handlePreviousButtonClicked={handlePreviousButtonClicked}
               />
             )}
           </PropertyFilter>
@@ -168,18 +261,12 @@ const MapPage = () => {
             <MapComponent
               lat={userCoordinates?.lat ?? +MANILA_LATITUDE}
               lng={userCoordinates?.lng ?? +MANILA_LONGITUDE}
-              viewStateHandler={(viewStateEventPayload) =>
-                setViewState(viewStateEventPayload)
-              }
-            >
-              {Markers(
-                openPropertyDetails,
-                (debouncedNearProperties as any)
-                  ? (debouncedNearProperties as any).results
-                  : [],
-                activeProperty
-              )}
-            </MapComponent>
+              viewStateHandler={handleViewState}
+              onClick={openPropertyDetails}
+              properties={visibleProperties}
+              activeProperty={activeProperty}
+              mapRef={mapRef}
+            />
           </Box>
         </Grid>
       </Grid>
@@ -211,11 +298,12 @@ const MapPage = () => {
             )}{" "}
             {!isFetchingNearProperties && (
               <PropertyList
-                properties={
-                  (debouncedNearProperties as any)
-                    ? (debouncedNearProperties as any).results
-                    : []
+                disableNextButton={
+                  currentPageNumber === nearProperties.length - 1 &&
+                  !lastPropertyKey
                 }
+                disablePrevButton={currentPageNumber === 0}
+                properties={visibleProperties}
                 onHover={onPropertyHover}
               />
             )}
@@ -224,6 +312,6 @@ const MapPage = () => {
       </Box>
     </div>
   );
-};
+}
 
 export { MapPage };
