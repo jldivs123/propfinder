@@ -30,18 +30,25 @@ export const PropertyList: React.FC<{
       columnSpacing={2}
       rowSpacing={2}
       columns={12}
-      className="grow min-h-full"
+      className="grow h-100"
       justifyContent="center"
       direction="column"
+      sx={{ padding: "0", margin: 0, width: "100%", border: "1px solid green" }}
     >
       <Grid
         item
         container
         columnSpacing={2}
-        className="grow"
-        rowSpacing={2}
+        spacing={2}
+        className="grow p-2"
+        sx={{
+          height: "100%",
+          margin: 0,
+          padding: "4rem 0.5rem",
+          width: "100%",
+          border: "1px solid red",
+        }}
         columns={12}
-        sx={{ padding: "2rem" }}
       >
         {!properties?.length && "No properties in this area"}
         {properties?.length &&
@@ -56,6 +63,8 @@ export const PropertyList: React.FC<{
               <Grid
                 item
                 xs={12}
+                sm={6}
+                md={6}
                 xl={4}
                 container
                 justifyContent="center"
@@ -63,11 +72,15 @@ export const PropertyList: React.FC<{
                 key={`${propertyData.address}-${index}`}
                 onMouseEnter={() => onHover(property)}
                 onMouseLeave={() => onHover(null)}
-                sx={{ margin: 0, padding: 0, maxWidth: "345px" }}
+                sx={{
+                  margin: 0,
+                  padding: "1rem !important",
+                }}
               >
                 <PropertyDetailCard
                   onClick={() => visitProperty(property.pk)}
                   {...props}
+                  style={{ maxWidth: "98%", maxHeight: "98%" }}
                 />
               </Grid>
             );

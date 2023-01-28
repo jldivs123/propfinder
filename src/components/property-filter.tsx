@@ -6,10 +6,11 @@ const Wrapper = styled.div<FC>`
   display: flex;
   flex-direction: column;
   min-height: 90vh;
+  border: 1px solid black;
 `;
 
 const PropertyFilter: FC = ({ children }) => {
-  return <Wrapper className="grow p-1">{children}</Wrapper>;
+  return <Wrapper>{children}</Wrapper>;
 };
 
 export { PropertyFilter };

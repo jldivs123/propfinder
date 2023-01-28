@@ -28,6 +28,7 @@ export function HomePage() {
           justifyContent="center"
           rowSpacing={1}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          height={{ xs: "100vh", md: "auto" }}
         >
           <Grid item lg={6} md={6} sm={12}>
             <Typography
@@ -79,9 +80,10 @@ export function HomePage() {
         <Grid
           item
           container
-          direction="row"
+          direction={{ md: "row", xs: "column" }}
           className="w-6/12"
           spacing={4}
+          columns={12}
           sx={{ marginTop: "1.5rem", width: "50%" }}
         >
           <Grid item xs={4}>

@@ -55,7 +55,6 @@ function MapPage(): JSX.Element {
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [activeProperty, setActiveProperty] = useState<any | null>(null);
   const [lastPropertyKey, setLastPropertyKey] = useState<any>(null);
-  const mapCenterRef = useRef(DEFAULT_MAP_CENTER);
   const [userCoordinates, setUserCoordinates] = useState<
     Coordinates | undefined
   >();
@@ -141,7 +140,6 @@ function MapPage(): JSX.Element {
   useEffect(() => {}, [viewState]);
 
   useEffect(() => {
-    console.log("sweet dreams are made of cheese");
     if (debouncedViewState && !isFirstRender) {
       const { lat, lng, precision } = debouncedViewState;
       // * Clear data
@@ -178,7 +176,7 @@ function MapPage(): JSX.Element {
   };
 
   return (
-    <div className="flex w-100 h-100 flex-wrap flex-column grow flex-col relative">
+    <div className="flex w-100 h-100 flex-nowrap flex-column grow flex-col relative">
       <Grid
         item
         container
@@ -200,6 +198,7 @@ function MapPage(): JSX.Element {
           width: "100%",
         }}
       >
+        {/* Filter container */}
         <Grid
           item
           md={6}
@@ -236,6 +235,7 @@ function MapPage(): JSX.Element {
             )}
           </PropertyFilter>
         </Grid>
+        {/* Map container */}
         <Grid
           item
           lg={6}
