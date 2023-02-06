@@ -1,23 +1,23 @@
 import Dexie, { Table } from "dexie";
 
-export interface HomePageFavorite {
+export interface ScarriotCart {
   pk: string;
   sk: string;
   geojson: any;
   author: string;
 }
 
-export class HomePageBookmark extends Dexie {
+export class ScarriotBookmark extends Dexie {
   // 'friends' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
-  savedProperties!: Table<HomePageFavorite>;
+  savedProperties!: Table<ScarriotCart>;
 
   constructor() {
-    super("HomePageFavoriteDB");
+    super("ScarriotCartDB");
     this.version(1).stores({
       savedProperties: "pk, sk, author", // Primary key and indexed props
     });
   }
 }
 
-export const db = new HomePageBookmark();
+export const db = new ScarriotBookmark();

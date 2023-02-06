@@ -15,7 +15,13 @@ export function HomePage() {
   }
 
   return (
-    <Container sx={{ flexGrow: 1, maxWidth: "100%" }}>
+    <Container
+      sx={{
+        flexGrow: 1,
+        maxWidth: "100%",
+        height: "auto",
+      }}
+    >
       <Stack
         sx={{ width: "100%" }}
         className="h-full"

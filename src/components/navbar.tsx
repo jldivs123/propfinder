@@ -122,7 +122,7 @@ const ResponsiveAppBar = () => {
                 fontWeight="800"
                 sx={{ textTransform: "lowercase" }}
               >
-                homepage.
+                Scarriot
               </Typography>
             </Button>
           </Box>
