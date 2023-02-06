@@ -23,7 +23,7 @@ export function DetailHeader(property: any) {
 
   return (
     <Card
-      className="rounded-2xl bg-white"
+      className="rounded-2xl"
       sx={{
         borderRadius: "12px",
         backgroundColor: "white",
