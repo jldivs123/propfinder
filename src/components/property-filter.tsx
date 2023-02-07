@@ -5,8 +5,11 @@ const Wrapper = styled.div<FC>`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   min-height: 90vh;
-  border: 1px solid black;
+  padding: 2rem 0;
+  border: 1px solid red;
 `;
 
 const PropertyFilter: FC = ({ children }) => {

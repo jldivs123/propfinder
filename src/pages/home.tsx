@@ -81,9 +81,9 @@ export function HomePage() {
               fontSize="0.90rem"
               textAlign={{ xs: "center", md: "left" }}
             >
-              Find your perfect property with ease using our user-friendly
-              catalog, a simpler alternative to traditional property search
-              methods.
+              Find a perfect home with ease using our user-friendly catalog, a
+              simpler alternative to traditional property search methods for
+              free!
             </Typography>
             <Button
               variant="contained"

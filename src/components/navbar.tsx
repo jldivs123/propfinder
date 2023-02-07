@@ -57,7 +57,7 @@ const ResponsiveAppBar = () => {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: "#FFF",
+        backgroundColor: "#f7faff",
       }}
       className="h-16"
     >

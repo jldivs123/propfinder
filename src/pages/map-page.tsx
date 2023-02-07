@@ -180,8 +180,8 @@ function MapPage(): JSX.Element {
       <Grid
         item
         container
-        rowSpacing={{ lg: 2 }}
-        columns={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+        rowSpacing={2}
+        columns={2}
         direction={{
           xs: "column-reverse",
           sm: "column-reverse",
@@ -195,16 +195,17 @@ function MapPage(): JSX.Element {
             sm: "80%",
           },
           flexGrow: 1,
+          background: "inherit",
           width: "100%",
         }}
+        flexWrap="nowrap"
       >
         {/* Filter container */}
         <Grid
           item
           md={6}
-          lg={6}
-          xl={4}
-          sx={{ display: { sm: "none", md: "block" } }}
+          container
+          sx={{ display: { xs: "none", md: "block" }, flexShrink: 0 }}
         >
           <PropertyFilter>
             {/* <Toolbar /> */}
@@ -216,7 +217,6 @@ function MapPage(): JSX.Element {
                 color="#6c63ff"
                 ariaLabel="puff-loading"
                 wrapperStyle={{ marginTop: "50%" }}
-                wrapperClass="m-auto my-2"
                 visible
               />
             )}{" "}
@@ -238,12 +238,10 @@ function MapPage(): JSX.Element {
         {/* Map container */}
         <Grid
           item
-          lg={6}
           md={6}
-          xl={8}
-          sm={12}
+          xs={12}
           sx={{
-            height: { lg: "100%", md: "100%", sm: "100%" },
+            height: "100%",
             flexGrow: 1,
             display: "flex",
           }}
@@ -252,7 +250,7 @@ function MapPage(): JSX.Element {
             sx={{
               height: "calc(100vh - 4rem)",
               minHeight: "calc(100vh - 4rem)",
-              width: { md: "100%", lg: "100%", xs: "100%" },
+              width: { xs: "100%" },
               position: { lg: "sticky", md: "sticky", sm: "relative" },
               top: { sm: 0, md: "4rem", lg: "4rem" },
               contain: "paint layout",

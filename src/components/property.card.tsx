@@ -86,11 +86,9 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       sx={{
         bgcolor: "#fff",
         borderRadius: "24px",
-        border: "2px solid #5A5A5A",
         height: "auto",
-        boxShadow: "none",
-        filter:
-          "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
+        boxShadow:
+          "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
       }}
       className="h-full group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >

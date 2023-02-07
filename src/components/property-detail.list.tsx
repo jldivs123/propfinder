@@ -30,10 +30,10 @@ export const PropertyList: React.FC<{
       columnSpacing={2}
       rowSpacing={2}
       columns={12}
-      className="grow h-100"
+      className="grow h-100 w-100"
       justifyContent="center"
       direction="column"
-      sx={{ padding: "0", margin: 0, width: "100%", border: "1px solid green" }}
+      sx={{ padding: "0", margin: 0, width: "100%" }}
     >
       <Grid
         item
@@ -44,9 +44,8 @@ export const PropertyList: React.FC<{
         sx={{
           height: "100%",
           margin: 0,
-          padding: "4rem 0.5rem",
+          padding: "4rem 0",
           width: "100%",
-          border: "1px solid red",
         }}
         columns={12}
       >
