@@ -33,7 +33,7 @@ export const PropertyList: React.FC<{
       className="grow h-100 w-100"
       justifyContent="center"
       direction="column"
-      sx={{ padding: "0", margin: 0, width: "100%" }}
+      sx={{ padding: "0", margin: 0, width: "100%", height: "100%" }}
     >
       <Grid
         item
@@ -42,11 +42,13 @@ export const PropertyList: React.FC<{
         spacing={2}
         className="grow p-2"
         sx={{
-          height: "100%",
           margin: 0,
           padding: "4rem 0",
           width: "100%",
+          minHeight: "100%",
         }}
+        flexGrow={1}
+        flexShrink={0}
         columns={12}
       >
         {!properties?.length && "No properties in this area"}
@@ -85,7 +87,14 @@ export const PropertyList: React.FC<{
             );
           })}
       </Grid>
-      <Grid item container justifyContent="center" className="grow-0 shrink-0">
+      <Grid
+        item
+        container
+        justifyContent="center"
+        flexGrow={0}
+        flexShrink={1}
+        height="3rem"
+      >
         <Button
           color="primary"
           aria-label="previous"

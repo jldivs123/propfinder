@@ -192,7 +192,7 @@ function MapPage(): JSX.Element {
           height: {
             lg: "100%",
             md: "100%",
-            sm: "80%",
+            sm: "100%",
           },
           flexGrow: 1,
           background: "inherit",
@@ -303,6 +303,8 @@ function MapPage(): JSX.Element {
                 disablePrevButton={currentPageNumber === 0}
                 properties={visibleProperties}
                 onHover={onPropertyHover}
+                handleNextButtonClicked={handleNextButtonClicked}
+                handlePreviousButtonClicked={handlePreviousButtonClicked}
               />
             )}
           </Box>

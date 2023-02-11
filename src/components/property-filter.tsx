@@ -8,8 +8,7 @@ const Wrapper = styled.div<FC>`
   justify-content: center;
   align-items: center;
   min-height: 90vh;
-  padding: 2rem 0;
-  border: 1px solid red;
+  margin-top: 2rem;
 `;
 
 const PropertyFilter: FC = ({ children }) => {
