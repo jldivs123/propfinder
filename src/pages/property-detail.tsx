@@ -43,48 +43,81 @@ export const PropertyDetailPage = () => {
     <Wrapper>
       <Container maxWidth="lg" className="py-2">
         {!isLoading && property && (
-          <Box sx={{ flexGrow: 1 }}>
+          <Grid
+            container
+            className="w-full w-100 grow"
+            height="auto"
+            spacing={3}
+            sx={{ border: "1px solid black" }}
+            direction="column"
+            justifyContent="flex-start"
+            alignItems="center"
+          >
+            <Grid item container xs={12} sx={{ border: "1px solid blue" }}>
+              <DetailHeader property={property} />
+            </Grid>
             <Grid
+              item
+              xs={12}
               container
-              className="w-full w-100 grow"
-              rowSpacing={3}
-              columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+              spacing={2}
+              sx={{
+                border: "1px solid green",
+                maxWidth: "100%",
+                width: "100%",
+                margin: 0,
+              }}
             >
-              <Grid item xs={12} md={12}>
-                <DetailHeader property={property} />
-              </Grid>
-              <Grid item xs={12} md={12} lg={12} container spacing={2}>
-                <Grid item xs={8} md={12} lg={8}>
-                  <Grid
-                    item
-                    xs={12}
-                    lg={12}
-                    container
-                    className="position-relative max-w-100"
-                    spacing={2}
-                  >
-                    <Grid item lg={12} xs={12}>
-                      <DetailSummary property={property} />
-                    </Grid>
-                    <Grid item lg={12} xs={12}>
-                      <DetailDescription property={property} />
-                    </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                lg={8}
+                className="max-w-100"
+                sx={{ border: "1px solid violet", maxWidth: "100%" }}
+              >
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  className="position-relative max-w-100"
+                  sx={{ border: "1px solid violet" }}
+                >
+                  <Grid item xs={12}>
+                    <DetailSummary property={property} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DetailDescription property={property} />
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} lg={4} sx={{ position: "relative" }}>
-                  <Box sx={{ position: "sticky", top: "5rem" }}>
-                    <DetailAuthorCard property={property} />
-                  </Box>
-                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <DetailMap property={property} />
-              </Grid>
-              <Grid item xs={12}>
-                <DetailAuthor property={property} />
+              <Grid
+                item
+                xs={12}
+                lg={4}
+                container
+                direction="column"
+                alignItems="center"
+                sx={{ position: "relative" }}
+              >
+                <Box sx={{ position: "sticky", top: "5rem" }}>
+                  <DetailAuthorCard property={property} />
+                </Box>
               </Grid>
             </Grid>
-          </Box>
+            <Grid
+              item
+              container
+              xs={12}
+              className="w-100"
+              sx={{ border: "1px solid yellow" }}
+            >
+              <DetailMap property={property} />
+            </Grid>
+            <Grid item xs={12} sx={{ border: "1px solid violet" }}>
+              <DetailAuthor property={property} />
+            </Grid>
+          </Grid>
         )}
         {isLoading && <Puff />}
       </Container>

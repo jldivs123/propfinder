@@ -31,9 +31,14 @@ export const PropertyList: React.FC<{
       rowSpacing={2}
       columns={12}
       className="grow h-100 w-100"
-      justifyContent="center"
+      justifyContent="flex-start"
       direction="column"
-      sx={{ padding: "0", margin: 0, width: "100%", height: "100%" }}
+      sx={{
+        padding: "0",
+        margin: 0,
+        width: "100%",
+        height: "100%",
+      }}
     >
       <Grid
         item
@@ -69,7 +74,7 @@ export const PropertyList: React.FC<{
                 xl={4}
                 container
                 justifyContent="center"
-                alignItems="center"
+                alignItems="flex-start"
                 key={`${propertyData.address}-${index}`}
                 onMouseEnter={() => onHover(property)}
                 onMouseLeave={() => onHover(null)}
