@@ -4,10 +4,20 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "react-spring-bottom-sheet/dist/style.css";
+import "react-loading-skeleton/dist/skeleton.css";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 // * Components
-import { MapPage, PropertyDetailPage, HomePage, BookMarkPage } from "./pages";
+import {
+  MapPage,
+  PropertyDetailPage,
+  HomePage,
+  BookMarkPage,
+  ContactPage,
+  PageNotFound,
+  FAQPage,
+  StoryPage,
+} from "./pages";
 import { ResponsiveAppBar, Footer } from "./components";
 
 import { ScreenSizeContextProvider } from "./utils";
@@ -23,7 +33,8 @@ const lightTheme = createTheme({
       main: "#fa557a",
     },
     background: {
-      paper: "#f2f2f2",
+      default: "#f7faff",
+      paper: "#f7faff",
     },
   },
   typography: {
@@ -89,6 +100,18 @@ function App() {
                   </Route>
                   <Route path="/bookmark" element={<BookMarkPage />}>
                     Bookmark
+                  </Route>
+                  <Route path="/contacts" element={<ContactPage />}>
+                    Contacts
+                  </Route>
+                  <Route path="/faq" element={<FAQPage />}>
+                    FAQ
+                  </Route>
+                  <Route path="/story" element={<StoryPage />}>
+                    Story
+                  </Route>
+                  <Route path="*" element={<PageNotFound />}>
+                    Page Not Found
                   </Route>
                   <Route
                     path="/properties/:id"

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -13,10 +12,6 @@ import { db } from "../lib/db";
 export const BookMarkPage = () => {
   const bookmarkedProperties = useLiveQuery(() => db.savedProperties.toArray());
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log(bookmarkedProperties);
-  }, [bookmarkedProperties]);
 
   return (
     <Container
@@ -61,7 +56,7 @@ export const BookMarkPage = () => {
                     },
                   } = bookmarkProperty;
                   return (
-                    <Grid item sx={{ margin: 0 }}>
+                    <Grid item sx={{ margin: 0 }} key={bookmarkProperty?.pk}>
                       <PropertyDetailCard
                         type={type}
                         address={address}

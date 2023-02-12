@@ -16,11 +16,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 
 import { db } from "../lib/db";
 
-const pages = ["The Story", "FAQ", "Contacts"];
+const pages = [
+  { displayName: "The Story", slug: "/story" },
+  { displayName: "FAQ", slug: "/faq" },
+  { displayName: "Contacts", slug: "/contacts" },
+];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
   const appBarRef = useRef<any>(null);
   const navigate = useNavigate();
   const bookmarkedProperties = useLiveQuery(() => db.savedProperties.toArray());
@@ -38,27 +41,12 @@ const ResponsiveAppBar = () => {
     };
   }, []);
 
-  const goToHome = () => {
-    navigate("/");
-  };
-
-  const goToBookmark = () => {
-    navigate("/bookmark");
-  };
-
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: any) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   return (
@@ -69,7 +57,7 @@ const ResponsiveAppBar = () => {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         padding: 0,
-        backgroundColor: "#FFF",
+        backgroundColor: "#f7faff",
       }}
       className="h-16"
     >
@@ -105,7 +93,7 @@ const ResponsiveAppBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page.slug} onClick={() => navigate(page.slug)}>
                   <Typography
                     textAlign="center"
                     sx={{
@@ -114,7 +102,7 @@ const ResponsiveAppBar = () => {
                       color: "#000",
                     }}
                   >
-                    {page}
+                    {page.displayName}
                   </Typography>
                 </MenuItem>
               ))}
@@ -128,21 +116,21 @@ const ResponsiveAppBar = () => {
               display: { xs: "block", md: "block", color: "black" },
             }}
           >
-            <Button onClick={goToHome} style={{ marginTop: "-5px" }}>
+            <Button onClick={() => navigate("")} style={{ marginTop: "-5px" }}>
               <Typography
                 variant="h4"
                 fontWeight="800"
                 sx={{ textTransform: "lowercase" }}
               >
-                homer.
+                Scarriot
               </Typography>
             </Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.slug}
+                onClick={() => navigate(page.slug)}
                 sx={{ my: 2, color: "#000", display: "block" }}
               >
                 <Typography
@@ -152,7 +140,7 @@ const ResponsiveAppBar = () => {
                     color: "#000",
                   }}
                 >
-                  {page}
+                  {page.displayName}
                 </Typography>
               </Button>
             ))}
@@ -162,7 +150,7 @@ const ResponsiveAppBar = () => {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
-              onClick={goToBookmark}
+              onClick={() => navigate("/bookmark")}
             >
               {bookmarkedProperties && (
                 <Badge

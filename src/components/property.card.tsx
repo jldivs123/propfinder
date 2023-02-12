@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,6 +15,7 @@ import { db } from "./../lib/db";
 interface IPropertyDetailCard {
   type: string;
   address: string;
+  rawAddress?: string;
   price: string;
   floorArea?: number;
   lotArea?: number;
@@ -25,6 +25,7 @@ interface IPropertyDetailCard {
   onClick?: () => void;
   onHover?: () => void;
   property?: any;
+  isLoading?: boolean;
 }
 
 function CardImagePlaceholder(onClick?: () => void) {
@@ -32,15 +33,16 @@ function CardImagePlaceholder(onClick?: () => void) {
   return (
     <div
       className="flex flex-col justify-center text-center items-center rounded-2xl h-48 m-0"
-      style={{ width: "100%", cursor: "pointer" }}
+      style={{ width: "100%", height: "auto", cursor: "pointer" }}
     >
       <CardMedia
         component="img"
         image={MISSING_PROPERTY_IMG}
         alt="Property image"
-        className="h-100 w-100 p-0"
+        className="h-100 w-100 p-0 object-contain"
         sx={{
           width: "100%",
+          height: "100%",
         }}
       />
       <Typography className="text-white" color="primary">
@@ -53,25 +55,20 @@ function CardImagePlaceholder(onClick?: () => void) {
 export function PropertyDetailCard(props: IPropertyDetailCard) {
   const {
     type,
-    address,
+    rawAddress,
     price,
     floorArea,
     lotArea,
-    numOfRoom,
     imgUrls,
-    withVirtualTour,
     onClick,
     onHover,
     property,
+    isLoading,
   } = props;
   const isBookmarked = useLiveQuery(() => {
     return db.savedProperties.where("pk").equals(property.pk).toArray();
   });
   const formattedPrice = price.replace(/ /g, "");
-
-  useEffect(() => {
-    console.log(isBookmarked);
-  }, [isBookmarked]);
 
   const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -89,85 +86,112 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       sx={{
         bgcolor: "#fff",
         borderRadius: "24px",
-        maxWidth: "98%",
-        minWidth: "45%",
-        maxHeight: 400,
-        position: "relative",
-        border: "2px solid #5A5A5A",
-        boxShadow: "none",
-        filter:
-          "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))",
+        height: "auto",
+        boxShadow:
+          "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
       }}
-      className="h-full w-80 group rounded-2xl hover:bg-slate-800 hover:text-white transition"
+      className="h-full group rounded-2xl hover:bg-slate-800 hover:text-white transition"
     >
-      <CardActionArea>
-        {!imgUrls && CardImagePlaceholder(onClick)}
-        {imgUrls && (
-          <CardMedia
-            component="img"
-            image={MISSING_PROPERTY_IMG}
-            alt="Property image"
-            onClick={onClick}
-            sx={{
-              width: "94%",
-              cursor: "pointer",
-            }}
-          />
-        )}
-        <CardContent
-          sx={{
-            flex: "1 0 auto",
-            padding: "0 1rem 1rem 1rem",
-            marginTop: "-1.5rem",
-          }}
-        >
-          <Grid container direction="column">
-            <Grid container item justifyContent="center" alignItems="center">
-              <Grid item xs={10}>
-                <Typography
-                  variant="subtitle1"
-                  color="text.secondary"
-                  className="group-hover:text-white"
-                  component="div"
-                >
-                  <b>
-                    <span>&#8369;</span>
-                    {formattedPrice}
-                  </b>
-                </Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <CardActions>
-                  <IconButton
-                    onMouseDown={(event) => event.stopPropagation()}
-                    onClick={handleBookmarkClick}
-                    aria-label="settings"
-                  >
-                    <MdBookmark
-                      color={isBookmarked?.length ? "disabled" : "primary"}
-                    />
-                  </IconButton>
-                </CardActions>
-              </Grid>
-            </Grid>
-            <Typography component="div" variant="body1">
-              {type}
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                className="group-hover:text-white"
-              >
-                {floorArea && floorArea > 0
-                  ? `Floor area: ${floorArea} sq/m`
-                  : "Floor area: N/A"}{" "}
-                &#183;
-                {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
-              </Typography>
-            </Box>
+      <CardActionArea component="span">
+        <Grid container direction="column" className="h-auto" columns={12}>
+          <Grid item container xs={8}>
+            {!imgUrls && !isLoading && CardImagePlaceholder(onClick)}
+            {imgUrls && !isLoading && (
+              <CardMedia
+                component="img"
+                image={MISSING_PROPERTY_IMG}
+                alt="Property image"
+                onClick={onClick}
+                sx={{
+                  width: "100%",
+                  cursor: "pointer",
+                }}
+              />
+            )}
           </Grid>
-        </CardContent>
+          <Grid item container xs={4}>
+            <CardContent
+              sx={{
+                flex: "1 0 auto",
+                padding: "0 1rem 1rem 1rem",
+                maxWidth: "100%",
+              }}
+            >
+              <Grid container direction="column">
+                <Grid
+                  container
+                  item
+                  justifyContent="center"
+                  direction="row"
+                  alignItems="center"
+                >
+                  <Grid item xs={10}>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      className="group-hover:text-white"
+                      component="div"
+                    >
+                      <b>
+                        <span>&#8369;</span>
+                        {formattedPrice}
+                      </b>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <CardActions>
+                      <IconButton
+                        onMouseDown={(event) => event.stopPropagation()}
+                        onClick={handleBookmarkClick}
+                        aria-label="settings"
+                      >
+                        <MdBookmark
+                          color={isBookmarked?.length ? "primary" : "disabled"}
+                        />
+                      </IconButton>
+                    </CardActions>
+                  </Grid>
+                </Grid>
+                <Typography component="div" variant="body1">
+                  {type}
+                </Typography>
+                <Box
+                  flexDirection="column"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    maxWidth: "90%",
+                    padding: "0 5px",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    className="group-hover:text-white max-w-86 truncate"
+                  >
+                    {rawAddress}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    className="group-hover:text-white"
+                  >
+                    {floorArea && floorArea > 0
+                      ? `Floor area: ${floorArea} sq/m`
+                      : "Floor area: N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    className="group-hover:text-white"
+                  >
+                    {lotArea ? ` Lot area: ${lotArea} sq/m` : "N/A"}
+                  </Typography>
+                </Box>
+              </Grid>
+            </CardContent>
+          </Grid>
+        </Grid>
       </CardActionArea>
     </Card>
   );

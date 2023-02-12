@@ -23,10 +23,10 @@ export function DetailHeader(property: any) {
 
   return (
     <Card
-      className="rounded-2xl bg-white"
+      className="rounded-2xl"
       sx={{
         borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       }}
       elevation={0}
     >
@@ -36,7 +36,7 @@ export function DetailHeader(property: any) {
         sx={{ maxHeight: "480px" }}
         className=""
         image="/undraw_for_sale_re_egkk.svg"
-        alt="homer-property-images"
+        alt="homepage-property-images"
       />
       <CardContent>
         <Typography
@@ -45,6 +45,7 @@ export function DetailHeader(property: any) {
           component="div"
           sx={{
             fontWeight: "800",
+            margin: "1rem 0",
           }}
         >
           {type}
@@ -79,9 +80,9 @@ export function DetailSummary(property: any) {
   return (
     <Card
       sx={{
-        minWidth: 275,
         borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
+        padding: 0,
       }}
       elevation={0}
     >
@@ -93,6 +94,7 @@ export function DetailSummary(property: any) {
               component="div"
               sx={{
                 fontWeight: "bold",
+                margin: "1rem 0",
               }}
             >
               About this property:
@@ -261,7 +263,7 @@ export function DetailDescription(property: any) {
       sx={{
         minWidth: 275,
         borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       }}
     >
       <CardContent>
@@ -272,6 +274,7 @@ export function DetailDescription(property: any) {
               component="div"
               sx={{
                 fontWeight: "bold",
+                margin: "1rem 0",
               }}
             >
               Description:
@@ -310,8 +313,7 @@ export function DetailMap(property: any) {
       elevation={0}
       sx={{
         minWidth: 275,
-        borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       }}
       className="shadow-xl"
     >
@@ -323,6 +325,7 @@ export function DetailMap(property: any) {
               component="div"
               sx={{
                 fontWeight: "bold",
+                margin: "1rem 0",
               }}
             >
               Logistics
@@ -333,6 +336,7 @@ export function DetailMap(property: any) {
               width="100%"
               height="450"
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
               src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
           &location=${location}`}
             ></iframe>
@@ -367,7 +371,7 @@ export function DetailAuthor(property: any) {
       sx={{
         minWidth: 275,
         borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       }}
     >
       <CardContent>
@@ -378,6 +382,7 @@ export function DetailAuthor(property: any) {
               component="div"
               sx={{
                 fontWeight: "bold",
+                margin: "1rem 0",
               }}
             >
               About the Author
@@ -410,7 +415,7 @@ export function DetailAuthorCard(property: any) {
       sx={{
         maxWidth: 345,
         borderRadius: "12px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
         boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
       }}
     >
@@ -418,7 +423,6 @@ export function DetailAuthorCard(property: any) {
         component="img"
         height="140"
         image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN3WYPb9P3tVFFr4UQjNPMxB6jEg2BJC4KbjhHY43pOw&s"
-        alt="green iguana"
       />
       <CardContent>
         <Typography
@@ -427,6 +431,7 @@ export function DetailAuthorCard(property: any) {
           component="div"
           sx={{
             fontWeight: "bold",
+            margin: "1rem 0",
           }}
         >
           Author: PAG-IBIG
