@@ -1,9 +1,32 @@
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import Typography from "@mui/material/Typography";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 
 import { PropertyDetailCard } from "../components";
+
+function NoProperties() {
+  return (
+    <Grid
+      item
+      container
+      direction="column"
+      justifyContent="center"
+      alignContent="center"
+    >
+      <img
+        src="./404.svg"
+        alt="No properties found"
+        loading="lazy"
+        style={{ width: "40%" }}
+      />
+      <Typography fontWeight={600} color="secondary" variant="h6">
+        Sorry, We couldn't find any properties here.
+      </Typography>
+    </Grid>
+  );
+}
 
 export const PropertyList: React.FC<{
   properties: Array<any>;
@@ -56,8 +79,8 @@ export const PropertyList: React.FC<{
         flexShrink={0}
         columns={12}
       >
-        {!properties?.length && "No properties in this area"}
-        {properties?.length &&
+        {!properties?.length && <NoProperties />}
+        {!!properties?.length &&
           properties.map((property: any, index: number) => {
             const propertyData = property.geojson.properties;
             const props = {

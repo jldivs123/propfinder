@@ -225,8 +225,9 @@ function MapPage(): JSX.Element {
                 properties={visibleProperties}
                 onHover={onPropertyHover}
                 disableNextButton={
-                  currentPageNumber === nearProperties.length - 1 &&
-                  !lastPropertyKey
+                  !nearProperties.length ||
+                  (currentPageNumber === nearProperties.length - 1 &&
+                    !lastPropertyKey)
                 }
                 disablePrevButton={currentPageNumber === 0}
                 handleNextButtonClicked={handleNextButtonClicked}
@@ -297,8 +298,9 @@ function MapPage(): JSX.Element {
             {!isFetchingNearProperties && (
               <PropertyList
                 disableNextButton={
-                  currentPageNumber === nearProperties.length - 1 &&
-                  !lastPropertyKey
+                  !nearProperties.length ||
+                  (currentPageNumber === nearProperties.length - 1 &&
+                    !lastPropertyKey)
                 }
                 disablePrevButton={currentPageNumber === 0}
                 properties={visibleProperties}
