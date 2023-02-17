@@ -14,4 +14,7 @@ export const THEME_COLORS = {
   GRAY: "#F2F2F2",
 };
 
-export const BASE_URL = "http://localhost:4000";
+export const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:4000"
+    : "https://api.scarriot.com";

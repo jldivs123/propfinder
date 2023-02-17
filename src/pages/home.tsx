@@ -81,9 +81,8 @@ export function HomePage() {
               fontSize="0.90rem"
               textAlign={{ xs: "center", md: "left" }}
             >
-              Find a perfect home with ease using our user-friendly catalog, a
-              simpler alternative to traditional property search methods for
-              free!
+              Find a perfect home with ease using our user-friendly catalog, no
+              need to go over dozens of PDFs from PAG-IBIG.
             </Typography>
             <Button
               variant="contained"

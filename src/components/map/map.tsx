@@ -1,10 +1,13 @@
-import { FC, useRef, useMemo, useState, useCallback, useEffect } from "react";
-import ReactMap, { Marker, MapRef } from "react-map-gl";
-import { getAreaOfPolygon, getCenterOfBounds, convertArea } from "geolib";
+import { FC, useRef, useMemo, useEffect } from "react";
+import ReactMap, { Marker } from "react-map-gl";
 import Typography from "@mui/material/Typography";
+import mapboxgl from "mapbox-gl";
+
+// eslint-disable-next-line
+(mapboxgl as any).workerClass =
+  require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 import { MAPBOX_PUBLIC_TOKEN, Coordinates } from "../../constants";
-import { calculateGeohashPrecision, useDebounce } from "../../utils";
 
 export const MapComponent: FC<
   Coordinates & {
@@ -31,11 +34,6 @@ export const MapComponent: FC<
     latitude: lat,
     zoom: 4,
   });
-  // const [viewState, setViewState] = useState<any>();
-  // const debouncedViewState = useDebounce(viewState, 500);
-  // const stateHandler = useCallback((value: any) => {
-  // setViewState(value.viewState);
-  // }, []);
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
 
   useEffect(() => {
@@ -87,30 +85,6 @@ export const MapComponent: FC<
       return <></>;
     }
   }, [properties]);
-
-  // useEffect(())
-
-  // useMemo(() => {
-  //   const map = mapRef.current;
-  //   if (map) {
-  //     const bounds: any = map.getMap()?.getBounds();
-  //     // * `polygon` variable represents the rectangular area
-  //     const polygon: any = [
-  //       [bounds._ne.lat, bounds._sw.lng],
-  //       [bounds._ne.lat, bounds._ne.lng],
-  //       [bounds._sw.lat, bounds._ne.lng],
-  //       [bounds._sw.lat, bounds._sw.lng],
-  //     ];
-  //     const area = convertArea(getAreaOfPolygon(polygon), "km2");
-  //     const center = getCenterOfBounds(polygon);
-  //     const precision = calculateGeohashPrecision(area);
-  //     viewStateHandler({
-  //       lat: center.longitude,
-  //       lng: center.latitude,
-  //       precision,
-  //     });
-  //   }
-  // }, [viewStateHandler]);
 
   return (
     <ReactMap
