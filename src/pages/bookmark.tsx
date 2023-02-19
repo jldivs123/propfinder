@@ -56,7 +56,12 @@ export const BookMarkPage = () => {
                     },
                   } = bookmarkProperty;
                   return (
-                    <Grid item sx={{ margin: 0 }} key={bookmarkProperty?.pk}>
+                    <Grid
+                      item
+                      sx={{ margin: 0 }}
+                      className="w-80"
+                      key={bookmarkProperty?.pk}
+                    >
                       <PropertyDetailCard
                         type={type}
                         address={address}
