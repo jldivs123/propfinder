@@ -70,13 +70,13 @@ function MapPage(): JSX.Element {
   const isFirstRender = useFirstRender();
 
   // * Ask for user's location
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => getUserAddress(pos, setUserCoordinates),
-      (err) => console.log(err),
-      OPTIONS
-    );
-  }, []);
+  // useEffect(() => {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (pos) => getUserAddress(pos, setUserCoordinates),
+  //     (err) => console.log(err),
+  //     OPTIONS
+  //   );
+  // }, []);
 
   // * Get nearest properties & add to `nearProperties` 2D-array + set the lastKey
   useEffect(() => {
