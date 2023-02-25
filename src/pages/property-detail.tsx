@@ -48,12 +48,11 @@ export const PropertyDetailPage = () => {
             className="w-full w-100 grow"
             height="auto"
             spacing={3}
-            sx={{ border: "1px solid black" }}
             direction="column"
             justifyContent="flex-start"
             alignItems="center"
           >
-            <Grid item container xs={12} sx={{ border: "1px solid blue" }}>
+            <Grid item container xs={12}>
               <DetailHeader property={property} />
             </Grid>
             <Grid
@@ -62,7 +61,6 @@ export const PropertyDetailPage = () => {
               container
               spacing={2}
               sx={{
-                border: "1px solid green",
                 maxWidth: "100%",
                 width: "100%",
                 margin: 0,
@@ -74,14 +72,13 @@ export const PropertyDetailPage = () => {
                 xs={12}
                 lg={8}
                 className="max-w-100"
-                sx={{ border: "1px solid violet", maxWidth: "100%" }}
+                sx={{ maxWidth: "100%" }}
               >
                 <Grid
                   item
                   xs={12}
                   container
                   className="position-relative max-w-100"
-                  sx={{ border: "1px solid violet" }}
                 >
                   <Grid item xs={12}>
                     <DetailSummary property={property} />
@@ -105,16 +102,10 @@ export const PropertyDetailPage = () => {
                 </Box>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              className="w-100"
-              sx={{ border: "1px solid yellow" }}
-            >
+            <Grid item container xs={12} className="w-100">
               <DetailMap property={property} />
             </Grid>
-            <Grid item xs={12} sx={{ border: "1px solid violet" }}>
+            <Grid item xs={12}>
               <DetailAuthor property={property} />
             </Grid>
           </Grid>

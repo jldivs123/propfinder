@@ -1,3 +1,4 @@
+import { useState } from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -12,14 +13,37 @@ import TitleIcon from "@mui/icons-material/Title";
 import CommentIcon from "@mui/icons-material/Comment";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
+import Rating from "@mui/material/Rating";
+import Tooltip from "@mui/material/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
+import IconButton from "@mui/material/IconButton";
+import { useLiveQuery } from "dexie-react-hooks";
+import MdBookmark from "@mui/icons-material/Bookmark";
+import Alert from "@mui/material/Alert";
+
+import { db } from "../../lib/db";
 
 export function DetailHeader(property: any) {
   // * Check this link out for tiled images: https://github.com/christikaes/react-image-masonry
   const {
     property: {
+      pk = "",
       geojson: { properties: { rawAddress = null, type = null } = null } = null,
     } = null,
   } = property;
+
+  const isBookmarked = useLiveQuery(() => {
+    return db.savedProperties.where("pk").equals(pk).toArray();
+  });
+
+  const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isBookmarked?.length) {
+      return db.savedProperties.delete(pk);
+    }
+    return db.savedProperties.add(property.property);
+  };
 
   return (
     <Card
@@ -27,6 +51,7 @@ export function DetailHeader(property: any) {
       sx={{
         borderRadius: "12px",
         backgroundColor: "transparent",
+        width: "100%",
       }}
       elevation={0}
     >
@@ -39,17 +64,39 @@ export function DetailHeader(property: any) {
         alt="homepage-property-images"
       />
       <CardContent>
-        <Typography
-          gutterBottom
-          variant="h4"
-          component="div"
-          sx={{
-            fontWeight: "800",
-            margin: "1rem 0",
-          }}
-        >
-          {type}
-        </Typography>
+        <Grid container justifyContent="space-between" columns={12}>
+          <Grid item xs={6}>
+            <Typography
+              variant="h4"
+              component="div"
+              sx={{
+                fontWeight: "800",
+                margin: "1rem 0",
+                marginLeft: "-1rem",
+              }}
+            >
+              {type}
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            container
+            alignItems="center"
+            xs={6}
+            justifyContent="flex-end"
+          >
+            <IconButton
+              onMouseDown={(event) => event.stopPropagation()}
+              onClick={handleBookmarkClick}
+              aria-label="settings"
+            >
+              <MdBookmark
+                color={isBookmarked?.length ? "primary" : "disabled"}
+              />
+            </IconButton>
+          </Grid>
+        </Grid>
+
         <Typography variant="body2" color="text" sx={{ fontSize: "1.2rem" }}>
           <span>
             <FmdGoodIcon fontSize="large" color="primary" />
@@ -282,13 +329,7 @@ export function DetailDescription(property: any) {
           </Grid>
           <Grid item xs={12} lg={12}>
             <Typography variant="body2" sx={{ fontSize: "1rem" }}>
-              {description !== "N/A"
-                ? description
-                : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vehicula purus sit amet iaculis cursus. Sed a massa nec arcu interdum iaculis. Nulla eleifend leo sit amet arcu rhoncus finibus. Fusce varius sem eget nulla bibendum posuere nec at ex. Proin blandit dolor et velit efficitur, vel maximus quam tincidunt. Cras maximus a tortor eu lacinia. Phasellus in sem id nisi tincidunt mattis. Morbi fermentum, dui id pellentesque tempus, est purus laoreet nibh, vitae fermentum urna diam malesuada enim. Mauris vitae faucibus nulla. Maecenas nulla massa, lobortis vitae nisl non, aliquet convallis leo. Vestibulum sed magna viverra, maximus orci at, fermentum est.
-
-                In porttitor mauris nec faucibus auctor. Aenean viverra tempus erat, nec auctor quam consequat sit amet. Sed vel magna lectus. Morbi eget lorem interdum, vestibulum tellus in, lobortis lectus. Donec vitae orci nulla. Morbi id nulla vel mi pharetra mollis. Suspendisse justo elit, placerat eget sapien a, posuere posuere turpis. Vestibulum placerat leo quis pellentesque sodales. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus finibus dolor id arcu pretium gravida. Curabitur commodo sit amet elit et tempus. Praesent malesuada felis vitae erat vehicula, et ullamcorper turpis condimentum. Proin sed diam id tortor maximus pulvinar. Curabitur eu luctus mauris. Praesent sapien sapien, molestie sed metus eu, sodales semper nibh.
-                
-                Curabitur et auctor urna. Aenean vel quam fringilla, bibendum metus id, consectetur neque. In ultrices nec libero ac maximus. Vestibulum varius nibh turpis, a aliquet ex dignissim vitae. Nulla rutrum orci mauris, et feugiat urna mattis vel. Nullam placerat orci vitae justo egestas, varius elementum purus iaculis. Curabitur gravida sollicitudin lectus et cursus. Integer tincidunt ipsum urna, blandit tincidunt quam sodales eget. Mauris sagittis, elit ac accumsan finibus, risus elit venenatis magna, eu consequat mi libero ac arcu. Etiam risus nulla, rhoncus tincidunt porta sed, efficitur ac justo. Duis fringilla feugiat tellus, ultricies laoreet enim blandit sit amet. Praesent eu dapibus diam, sit amet semper ligula. Morbi lectus felis, consequat at odio et, finibus tincidunt massa. Suspendisse sed fermentum arcu. Aenean est sapien, volutpat vel dui eget, feugiat semper mauris. Integer dignissim id lorem molestie vehicula.`}
+              {description}
             </Typography>
           </Grid>
         </Grid>
@@ -307,12 +348,17 @@ export function DetailMap(property: any) {
     } = null,
   } = property;
   const location = `${coordinates[1]},${coordinates[0]}`;
+  const [viewType, setViewType] = useState<"street" | "default">("street");
+
+  const toggleView = () => {
+    setViewType(viewType === "street" ? "default" : "street");
+  };
 
   return (
     <Card
       elevation={0}
       sx={{
-        minWidth: 275,
+        minWidth: "100%",
         backgroundColor: "transparent",
       }}
       className="shadow-xl"
@@ -328,27 +374,42 @@ export function DetailMap(property: any) {
                 margin: "1rem 0",
               }}
             >
-              Logistics
+              Where's your next property at:
             </Typography>
+            <Alert severity="info" sx={{ margin: "1rem 0" }}>
+              If you're seeing a black screen, it means Google doesn't have
+              street view available for that area.
+            </Alert>
           </Grid>
           <Grid item xs={12} lg={12}>
-            <iframe
-              width="100%"
-              height="450"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
+            {viewType === "street" ? (
+              <iframe
+                width="100%"
+                height="450"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
           &location=${location}`}
-            ></iframe>
+              ></iframe>
+            ) : (
+              <iframe
+                width="100%"
+                height="450"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
+        &q=${location}`}
+              ></iframe>
+            )}
           </Grid>
-          <Grid item xs={12} lg={12}>
-            <Button variant="contained">
+          <Grid item xs={12} lg={12} sx={{ marginTop: "1rem " }}>
+            <Button variant="contained" onClick={toggleView}>
               <Typography
                 variant="body2"
                 fontWeight="bold"
                 sx={{ fontSize: "1rem" }}
               >
-                View on 3D street map
+                Toggle view
               </Typography>
             </Button>
           </Grid>
@@ -361,7 +422,16 @@ export function DetailMap(property: any) {
 export function DetailAuthor(property: any) {
   const {
     property: {
-      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+      geojson: {
+        properties: {
+          branchInfo: {
+            dropboxLocation = null,
+            offerDuration = null,
+            branch = null,
+            batchNumber = null,
+          } = {},
+        } = null,
+      } = null,
     } = null,
   } = property;
 
@@ -385,16 +455,45 @@ export function DetailAuthor(property: any) {
                 margin: "1rem 0",
               }}
             >
-              About the Author
+              Where you'll be bidding:
             </Typography>
           </Grid>
           <Grid item xs={12} lg={12}>
-            <Typography variant="body2" sx={{ fontSize: "1rem" }}>
-              The Home Development Mutual Fund, commonly known as the Pag-IBIG
-              Fund, is a government-owned and controlled corporation under the
-              Department of Human Settlements and Urban Development of the
-              Philippines responsible for the administration of the national
-              savings program and affordable shelter financing for Filipinos
+            <Typography
+              variant="subtitle1"
+              sx={{ fontSize: "1rem", marginTop: "1rem" }}
+            >
+              <Typography fontWeight={600} color="primary">
+                Branch Name
+              </Typography>{" "}
+              {branch}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontSize: "1rem", marginTop: "1rem" }}
+            >
+              <Typography fontWeight={600} color="primary">
+                Dropbox Location/s
+              </Typography>{" "}
+              {dropboxLocation}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontSize: "1rem", marginTop: "1rem" }}
+            >
+              <Typography fontWeight={600} color="primary">
+                Offer Duration
+              </Typography>{" "}
+              {offerDuration}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontSize: "1rem", marginTop: "1rem" }}
+            >
+              <Typography fontWeight={600} color="primary">
+                Batch Number
+              </Typography>{" "}
+              {batchNumber}
             </Typography>
           </Grid>
         </Grid>
@@ -406,47 +505,129 @@ export function DetailAuthor(property: any) {
 export function DetailAuthorCard(property: any) {
   const {
     property: {
-      geojson: { properties: { rawAddress = null, type = null } = null } = null,
+      geojson: {
+        properties: {
+          minimumBuyerIncome = null,
+          geocodedData: { results = null } = null,
+          branchInfo: { offerDuration = null, documentUrl = null } = {},
+        } = null,
+      } = null,
     } = null,
   } = property;
+
+  const visitPagIbig = () => {
+    const url = documentUrl
+      ? documentUrl
+      : "https://www.pagibigfund.gov.ph/acquiredassets.html";
+
+    window.open(url, "_blank")?.focus();
+  };
 
   return (
     <Card
       sx={{
         maxWidth: 345,
-        borderRadius: "12px",
+        borderRadius: "15px",
         backgroundColor: "transparent",
         boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+        border: "1px solid #DDDDDD",
       }}
     >
-      <CardMedia
+      {/* <CardMedia
         component="img"
         height="140"
         image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN3WYPb9P3tVFFr4UQjNPMxB6jEg2BJC4KbjhHY43pOw&s"
-      />
+      /> */}
       <CardContent>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          sx={{
-            fontWeight: "bold",
-            margin: "1rem 0",
-          }}
+        <Grid container className="w-100" columns={12}>
+          <Grid item xs={6}>
+            <Typography
+              gutterBottom
+              variant="caption"
+              component="div"
+              fontWeight="font-light"
+            >
+              Min. Buyer income
+            </Typography>
+            <Typography
+              gutterBottom
+              variant="body1"
+              component="div"
+              sx={{
+                fontWeight: "bold",
+              }}
+            >
+              &#8369;{minimumBuyerIncome ? `${minimumBuyerIncome}` : "N/A"}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography gutterBottom variant="caption" component="div">
+              Confidence{" "}
+              <span>
+                <Tooltip
+                  title="Confidence refers to how accurate our system thinks about this property's coordinates."
+                  sx={{ width: "14px" }}
+                >
+                  <InfoIcon></InfoIcon>
+                </Tooltip>
+              </span>
+            </Typography>
+            <Typography
+              gutterBottom
+              variant="body1"
+              component="div"
+              sx={{
+                fontWeight: "bold",
+              }}
+            >
+              <Rating
+                color="primary"
+                name="read-only"
+                defaultValue={0}
+                precision={0.5}
+                value={results ? results[0].confidence / 2 : 0}
+                readOnly
+              />
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          className="w-100 my-1 border-dotted border-2 border-indigo-600 rounded-lg"
+          columns={12}
         >
-          Author: PAG-IBIG
-        </Typography>
-        <Typography variant="body2" sx={{ fontSize: "1rem" }}>
-          The Home Development Mutual Fund, commonly known as the Pag-IBIG Fund,
-          is a government-owned and controlled corporation under the Department
-          of Human Settlements and Urban Development of the Philippines
-          responsible for the administration of the national savings program and
-          affordable shelter financing for Filipinos
-        </Typography>
+          <Grid item xs={12} sx={{ borderBottom: "1px solid #6d65fb" }}>
+            <Typography
+              variant="caption"
+              component="div"
+              textAlign="center"
+              fontWeight="font-light"
+            >
+              Offer Duration
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography
+              gutterBottom
+              variant="body1"
+              component="div"
+              textAlign="center"
+              fontWeight={700}
+            >
+              {offerDuration ?? "N/A"}
+            </Typography>
+          </Grid>
+        </Grid>
       </CardContent>
       <CardActions>
-        <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button
+          onClick={visitPagIbig}
+          size="large"
+          variant="contained"
+          sx={{ width: "100%", margin: "5px 5px 1rem 5px" }}
+        >
+          Learn More
+        </Button>
       </CardActions>
     </Card>
   );
