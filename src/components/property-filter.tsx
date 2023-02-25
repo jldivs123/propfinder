@@ -9,6 +9,7 @@ const Wrapper = styled.div<FC>`
   align-items: center;
   min-height: 90vh;
   margin-top: 2rem;
+  position: relative;
 `;
 
 const PropertyFilter: FC = ({ children }) => {

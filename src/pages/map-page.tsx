@@ -216,8 +216,10 @@ function MapPage(): JSX.Element {
                 radius={1}
                 color="#6c63ff"
                 ariaLabel="puff-loading"
-                wrapperStyle={{ marginTop: "50%" }}
                 visible
+                wrapperStyle={{
+                  margin: "auto",
+                }}
               />
             )}{" "}
             {!isFetchingNearProperties && (
