@@ -151,6 +151,7 @@ const ResponsiveAppBar = () => {
               aria-label="show 4 new mails"
               color="inherit"
               onClick={() => navigate("/bookmark")}
+              sx={{ marginRight: { xs: "-15px", sm: 0 } }}
             >
               {bookmarkedProperties && (
                 <Badge
