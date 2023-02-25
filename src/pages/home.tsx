@@ -68,7 +68,11 @@ export function HomePage() {
               variant="h1"
               fontWeight="bold"
               fontSize={{ xs: "1.5rem", sm: "2rem", md: "2.5rem" }}
-              sx={{ display: "flex", flexDirection: "column" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                margin: "1rem 0",
+              }}
               textAlign={{ xs: "center", md: "left" }}
               className="prose md:prose-lg lg:prose-xl"
               color="#2e2e40"
@@ -89,6 +93,7 @@ export function HomePage() {
               color="primary"
               disableElevation
               onClick={handleClick}
+              size="large"
               sx={{
                 borderRadius: "15px",
                 marginTop: "1rem",
@@ -119,12 +124,24 @@ export function HomePage() {
         <Grid
           item
           container
-          direction={{ md: "row", xs: "column" }}
           className="w-6/12"
           columns={12}
-          sx={{ marginTop: "1.5rem", width: { xs: "100%", lg: "50%" } }}
+          direction={{ xs: "column", md: "row" }}
+          sx={{
+            marginTop: "1rem",
+            width: { xs: "100%", lg: "50%" },
+            height: "auto",
+            flexWrap: "nowrap",
+          }}
         >
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={4}
+            sx={{
+              marginBottom: { xs: "1.5rem", md: "0" },
+              width: { xs: "100%", md: "inherit" },
+            }}
+          >
             <Box>
               <Typography
                 variant="h4"
@@ -134,14 +151,21 @@ export function HomePage() {
                 fontWeight={600}
                 align="center"
               >
-                2,000+
+                1,000+
               </Typography>
               <Typography variant="body2" align="center">
                 Properties listed
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={4}
+            sx={{
+              marginBottom: { xs: "1.5rem", md: "0" },
+              width: { xs: "100%", md: "inherit" },
+            }}
+          >
             <Box>
               <Typography
                 variant="h4"
@@ -158,7 +182,14 @@ export function HomePage() {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={4}
+            sx={{
+              marginBottom: { xs: "1.5rem", md: "0" },
+              width: { xs: "100%", md: "inherit" },
+            }}
+          >
             <Box>
               <Typography
                 variant="h4"

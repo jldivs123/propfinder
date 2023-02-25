@@ -21,8 +21,14 @@ function NoProperties() {
         loading="lazy"
         style={{ width: "40%" }}
       />
-      <Typography fontWeight={600} color="secondary" variant="h6">
-        Sorry, We couldn't find any properties here.
+      <Typography
+        fontWeight={600}
+        color="primary"
+        variant="subtitle1"
+        textAlign="center"
+        style={{ width: "40%" }}
+      >
+        Awww, no properties found in this area.
       </Typography>
     </Grid>
   );
