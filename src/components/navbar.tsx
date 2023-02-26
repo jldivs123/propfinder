@@ -150,7 +150,7 @@ const ResponsiveAppBar = () => {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
-              onClick={() => navigate("/bookmark")}
+              onClick={() => window.open("/bookmark", "_blank")}
               sx={{ marginRight: { xs: "-15px", sm: 0 } }}
             >
               {bookmarkedProperties && (
