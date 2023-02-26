@@ -84,7 +84,7 @@ export const MapComponent: FC<
     } else {
       return <></>;
     }
-  }, [properties]);
+  }, [properties, activeProperty]);
 
   return (
     <ReactMap
