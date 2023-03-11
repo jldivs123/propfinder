@@ -56,13 +56,18 @@ export function StoryPage() {
               container
               sx={{ width: { xs: "90%", lg: "100%" }, margin: "20px 0px" }}
             >
-              <br />
+              <img
+                src="./undraw_into_the_night_vumi.svg"
+                alt="scarriot-story"
+                style={{ height: "400px", width: "100%" }}
+              />
               <br />
               <br />
               <Typography
                 fontSize={{
                   xs: "18px",
                   lg: "20px",
+                  marginTop: "20px",
                   display: "block",
                   fontFamily: `source-serif-pro, Georgia, Cambria, "Times New Roman", Times, serif;`,
                 }}
