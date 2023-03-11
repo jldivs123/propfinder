@@ -59,7 +59,7 @@ export const PropertyList: React.FC<{
       columnSpacing={2}
       rowSpacing={2}
       columns={12}
-      className="grow h-100 w-100"
+      className="h-100 w-100"
       justifyContent="flex-start"
       direction="column"
       sx={{
@@ -115,6 +115,7 @@ export const PropertyList: React.FC<{
                 <PropertyDetailCard
                   onClick={() => visitProperty(property.pk)}
                   {...props}
+                  id={property.pk}
                   style={{ maxWidth: "98%", maxHeight: "98%" }}
                 />
               </Grid>

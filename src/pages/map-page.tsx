@@ -205,7 +205,12 @@ function MapPage(): JSX.Element {
           item
           md={6}
           container
-          sx={{ display: { xs: "none", md: "block" }, flexShrink: 0 }}
+          sx={{
+            display: { xs: "none", md: "block" },
+            flexShrink: 0,
+            maxWidth: "50%",
+            width: "50%",
+          }}
         >
           <PropertyFilter>
             {/* <Toolbar /> */}
@@ -253,6 +258,7 @@ function MapPage(): JSX.Element {
             sx={{
               height: "calc(100vh - 4rem)",
               minHeight: "calc(100vh - 4rem)",
+              flexShrink: 0,
               width: { xs: "100%" },
               position: { lg: "sticky", md: "sticky", sm: "relative" },
               top: { sm: 0, md: "4rem", lg: "4rem" },

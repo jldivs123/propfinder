@@ -58,7 +58,7 @@ export const BookMarkPage = () => {
                   return (
                     <Grid
                       item
-                      sx={{ margin: 0 }}
+                      sx={{ margin: "20px" }}
                       className="w-80"
                       key={bookmarkProperty?.pk}
                     >

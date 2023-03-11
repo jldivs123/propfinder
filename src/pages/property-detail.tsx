@@ -51,6 +51,10 @@ export const PropertyDetailPage = () => {
             direction="column"
             justifyContent="flex-start"
             alignItems="center"
+            sx={{
+              margin: "0",
+              maxWidth: "100%",
+            }}
           >
             <Grid item container xs={12}>
               <DetailHeader property={property} />

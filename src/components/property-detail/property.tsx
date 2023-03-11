@@ -72,7 +72,7 @@ export function DetailHeader(property: any) {
               sx={{
                 fontWeight: "800",
                 margin: "1rem 0",
-                marginLeft: "-1rem",
+                marginLeft: { md: "-1rem", xs: "0" },
               }}
             >
               {type}

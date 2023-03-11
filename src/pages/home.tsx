@@ -86,7 +86,7 @@ export function HomePage() {
               className="prose md:prose-lg lg:prose-xl"
               color="#2e2e40"
             >
-              <span>Finding a home</span>
+              <span>Finding a home </span>
               <span>shouldn't be hard.</span>
             </Typography>
             <Typography
