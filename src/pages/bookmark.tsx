@@ -19,12 +19,6 @@ export const BookMarkPage = () => {
         flexGrow: 1,
         maxWidth: "100%",
         padding: "4rem 0px",
-        backgroundColor: "#e5e5f7",
-        opacity: "1",
-        backgroundImage:
-          "radial-gradient(#444cf7 1.35px, transparent 1.35px), radial-gradient(#444cf7 1.35px, #e5e5f7 1.35px)",
-        backgroundSize: "54px 54px",
-        backgroundPosition: "0 0,27px 27px",
       }}
     >
       <Grid
