@@ -67,6 +67,12 @@ export const PropertyList: React.FC<{
         margin: 0,
         width: "100%",
         height: "100%",
+        backgroundColor: "#e5e5f7",
+        opacity: "1",
+        backgroundImage:
+          "radial-gradient(#444cf7 1.35px, transparent 1.35px), radial-gradient(#444cf7 1.35px, #e5e5f7 1.35px)",
+        backgroundSize: "54px 54px",
+        backgroundPosition: "0 0,27px 27px",
       }}
     >
       <Grid

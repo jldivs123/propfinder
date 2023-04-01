@@ -9,7 +9,6 @@ export function StoryPage() {
         flexGrow: 1,
         maxWidth: "100%",
         padding: "4rem 0px",
-        background: "#",
       }}
     >
       {" "}
