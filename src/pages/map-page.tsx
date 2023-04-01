@@ -103,8 +103,10 @@ function MapPage(): JSX.Element {
   }, []);
 
   const openPropertyDetails = (property: any) => {
-    setSelectedProperty(property);
-    setIsPropertyDrawerActive(true);
+    // TODO: Add a popup?
+    // setSelectedProperty(property);
+    // setIsPropertyDrawerActive(true);
+    window.open(`/properties/${property.pk}`, "_blank");
   };
 
   const onPropertyHover = useCallback((property: any) => {

@@ -91,7 +91,9 @@ export const MapComponent: FC<
   const renderMarkers = useMemo(() => {
     if (properties && properties.length) {
       return properties.map((property: any, index: number) => {
-        const onClickHandler = () => onClick(property);
+        const onClickHandler = () => {
+          onClick(property);
+        };
         const latitude = property.geojson.geometry.coordinates[1];
         const longitude = property.geojson.geometry.coordinates[0];
         const price =
@@ -114,6 +116,7 @@ export const MapComponent: FC<
                   activeProperty?.pk === property.pk ? "#1e293b" : "white",
                 height: "32px",
                 color: activeProperty?.pk === property.pk ? "white" : "black",
+                touchAction: "none",
               }}
               onMouseEnter={() => setHoveredProperty(property)}
               onMouseLeave={() => setHoveredProperty(null)}
