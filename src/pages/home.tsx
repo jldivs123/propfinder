@@ -28,7 +28,6 @@ export function HomePage() {
           height: "auto",
         }}
         alignContent="center"
-        direction="column"
         className="h-full"
         justifyContent="center"
         alignItems="center"

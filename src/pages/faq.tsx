@@ -12,7 +12,6 @@ export function FAQPage() {
         flexGrow: 1,
         maxWidth: "100%",
         padding: "4rem 0px",
-        background: "#",
       }}
     >
       {" "}
@@ -68,7 +67,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -98,7 +97,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -127,7 +126,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -158,7 +157,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -186,7 +185,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -214,7 +213,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -229,7 +228,8 @@ export function FAQPage() {
                     <Typography variant="caption" fontSize="1rem">
                       No, this is because some PDFs displayed in PAG-IBIG have
                       inconsistent displays or blurred output, hence my bot is
-                      not able to scrape the data from them
+                      not able to scrape the data from them. Rest assured, I am
+                      working on it!
                     </Typography>
                   </AccordionDetails>
                 </Accordion>
@@ -244,7 +244,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
@@ -290,7 +290,7 @@ export function FAQPage() {
                     width: "100%",
                     boxShadow:
                       "rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;",
-                    borderRadius: "24px",
+                    borderRadius: "24px !important",
                   }}
                 >
                   <AccordionSummary
