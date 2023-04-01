@@ -37,34 +37,21 @@ function CardImagePlaceholder(location?: any) {
       className="flex flex-col justify-center text-center items-center rounded-2xl h-80 m-0"
       style={{ width: "100%", height: "auto", cursor: "pointer" }}
     >
-      {" "}
-      {location && (
-        <iframe
-          width="100%"
-          className="h-80 w-100 p-0 object-contain"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyAgVnGRrGmfaAJCVzRh-TzbtdIfrKIjw8I
-          &location=${location}`}
+      <>
+        <CardMedia
+          component="img"
+          image={MISSING_PROPERTY_IMG}
+          alt="Property image"
+          className="h-100 w-100 p-0 object-contain"
+          sx={{
+            width: "100%",
+            height: "100%",
+          }}
         />
-      )}
-      {!location && (
-        <>
-          <CardMedia
-            component="img"
-            image={MISSING_PROPERTY_IMG}
-            alt="Property image"
-            className="h-100 w-100 p-0 object-contain"
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-          <Typography className="text-white" color="primary">
-            No image available.
-          </Typography>
-        </>
-      )}
+        <Typography className="text-white" color="primary">
+          No image available.
+        </Typography>
+      </>
     </div>
   );
 }
