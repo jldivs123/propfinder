@@ -39,7 +39,7 @@ export const BookMarkPage = () => {
               columns={12}
               columnSpacing={2}
               rowSpacing={2}
-              justifyContent="center"
+              justifyContent={{ xs: "center", md: "flex-start" }}
             >
               {bookmarkedProperties &&
                 bookmarkedProperties.map((bookmarkProperty) => {
@@ -58,7 +58,7 @@ export const BookMarkPage = () => {
                   return (
                     <Grid
                       item
-                      sx={{ margin: 0 }}
+                      sx={{ margin: "20px" }}
                       className="w-80"
                       key={bookmarkProperty?.pk}
                     >

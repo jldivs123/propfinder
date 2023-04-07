@@ -26,28 +26,32 @@ interface IPropertyDetailCard {
   onHover?: () => void;
   property?: any;
   isLoading?: boolean;
+  location?: any;
 }
 
-function CardImagePlaceholder(onClick?: () => void) {
+function CardImagePlaceholder(location?: any) {
   // * https://dev.to/franciscomendes10866/how-to-create-modern-cards-using-react-and-tailwind-2ded
+
   return (
     <div
-      className="flex flex-col justify-center text-center items-center rounded-2xl h-48 m-0"
+      className="flex flex-col justify-center text-center items-center rounded-2xl h-80 m-0"
       style={{ width: "100%", height: "auto", cursor: "pointer" }}
     >
-      <CardMedia
-        component="img"
-        image={MISSING_PROPERTY_IMG}
-        alt="Property image"
-        className="h-100 w-100 p-0 object-contain"
-        sx={{
-          width: "100%",
-          height: "100%",
-        }}
-      />
-      <Typography className="text-white" color="primary">
-        No image available.
-      </Typography>
+      <>
+        <CardMedia
+          component="img"
+          image={MISSING_PROPERTY_IMG}
+          alt="Property image"
+          className="h-100 w-100 p-0 object-contain"
+          sx={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
+        <Typography className="text-white" color="primary">
+          No image available.
+        </Typography>
+      </>
     </div>
   );
 }
@@ -65,6 +69,9 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
     property,
     isLoading,
   } = props;
+  const { geojson: { geometry: { coordinates = null } = null } = null } =
+    property;
+  const location = property ? `${coordinates[1]},${coordinates[0]}` : null;
   const isBookmarked = useLiveQuery(() => {
     return db.savedProperties.where("pk").equals(property.pk).toArray();
   });
@@ -95,7 +102,7 @@ export function PropertyDetailCard(props: IPropertyDetailCard) {
       <CardActionArea component="span">
         <Grid container direction="column" className="h-auto" columns={12}>
           <Grid item container xs={8}>
-            {!imgUrls && !isLoading && CardImagePlaceholder(onClick)}
+            {!imgUrls && !isLoading && CardImagePlaceholder(location)}
             {imgUrls && !isLoading && (
               <CardMedia
                 component="img"

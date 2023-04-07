@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Puff } from "react-loader-spinner";
+import Typography from "@mui/material/Typography";
 
 import {
   DetailHeader,
@@ -51,6 +52,10 @@ export const PropertyDetailPage = () => {
             direction="column"
             justifyContent="flex-start"
             alignItems="center"
+            sx={{
+              margin: "0",
+              maxWidth: "100%",
+            }}
           >
             <Grid item container xs={12}>
               <DetailHeader property={property} />
@@ -110,7 +115,47 @@ export const PropertyDetailPage = () => {
             </Grid>
           </Grid>
         )}
-        {isLoading && <Puff />}
+        {isLoading && (
+          <Grid
+            direction="column"
+            alignItems="center"
+            justifyItems="center"
+            sx={{
+              width: "100%",
+            }}
+          >
+            <Puff
+              color="#6c63ff"
+              wrapperStyle={{ margin: "auto", width: "100px" }}
+            />
+          </Grid>
+        )}
+        {!isLoading && !property && (
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyItems="center"
+            sx={{
+              width: "100%",
+            }}
+          >
+            <img
+              src="/undraw_under_construction_-46-pa.svg"
+              alt="Under construction"
+              style={{
+                width: "300px",
+                height: "200px",
+              }}
+            />
+            <Typography variant="h3" fontWeight={800}>
+              Aw, Snap!
+            </Typography>
+            <Typography variant="subtitle1">
+              Something went wrong while displaying this webpage.
+            </Typography>
+          </Grid>
+        )}
       </Container>
     </Wrapper>
   );

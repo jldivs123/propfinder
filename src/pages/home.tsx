@@ -2,7 +2,6 @@ import * as React from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
@@ -22,8 +21,13 @@ export function HomePage() {
         height: "auto",
       }}
     >
-      <Stack
-        sx={{ width: "100%" }}
+      <Grid
+        sx={{
+          minWidth: "100%",
+          minHeight: "80vh",
+          height: "auto",
+        }}
+        alignContent="center"
         className="h-full"
         justifyContent="center"
         alignItems="center"
@@ -37,11 +41,14 @@ export function HomePage() {
           columns={12}
           columnSpacing={{ xs: 2 }}
           flexGrow={1}
-          height="auto"
           sx={{
             flexGrow: 1,
-            marginTop: { xs: "2rem", md: 0 },
-            minHeight: { xs: "70vh", md: "30vh" },
+            marginTop: { xs: "1rem", md: 0 },
+            minHeight: { xs: "50vh", md: "70vh" },
+            height: "auto",
+            marginBottom: { xs: "2rem", md: 0 },
+            maxWidth: "100% !important",
+            marginLeft: "0 !important",
           }}
           direction={{ xs: "column-reverse", sm: "column-reverse", md: "row" }}
         >
@@ -50,6 +57,7 @@ export function HomePage() {
             container
             md={6}
             xs={4}
+            height="30vh"
             justifyContent={{ xs: "center", md: "flex-start" }}
             alignItems={{ xs: "center", md: "flex-start" }}
           >
@@ -77,7 +85,7 @@ export function HomePage() {
               className="prose md:prose-lg lg:prose-xl"
               color="#2e2e40"
             >
-              <span>Finding a home</span>
+              <span>Finding a home </span>
               <span>shouldn't be hard.</span>
             </Typography>
             <Typography
@@ -110,11 +118,21 @@ export function HomePage() {
           </Grid>
           <Grid
             item
+            container
             md={6}
             xs={6}
-            display={{ sm: "block", xs: "block", md: "block" }}
+            alignContent="center"
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+              height: "auto",
+            }}
           >
-            <img
+            <Box
+              component="img"
+              sx={{
+                height: { xs: "370px", md: "60vh" },
+              }}
               src="/undraw_choosing_house_re_1rv7.svg"
               alt="homepage-image"
             />
@@ -132,6 +150,7 @@ export function HomePage() {
             width: { xs: "100%", lg: "50%" },
             height: "auto",
             flexWrap: "nowrap",
+            margin: "auto",
           }}
         >
           <Grid
@@ -207,7 +226,7 @@ export function HomePage() {
             </Box>
           </Grid>
         </Grid>
-      </Stack>
+      </Grid>
     </Container>
   );
 }

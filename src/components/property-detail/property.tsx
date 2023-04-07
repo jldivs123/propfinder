@@ -72,7 +72,7 @@ export function DetailHeader(property: any) {
               sx={{
                 fontWeight: "800",
                 margin: "1rem 0",
-                marginLeft: "-1rem",
+                marginLeft: { md: "-1rem", xs: "0" },
               }}
             >
               {type}
@@ -167,7 +167,10 @@ export function DetailSummary(property: any) {
                 Base Price
               </Typography>
               <Typography variant="h6" component="div">
-                &#8369;{minimumSellingPrice}
+                &#8369;
+                {minimumSellingPrice
+                  ? `${minimumSellingPrice.replace(/ /g, "")}`
+                  : 0}
               </Typography>
             </Grid>
           </Grid>
@@ -445,7 +448,13 @@ export function DetailAuthor(property: any) {
       }}
     >
       <CardContent>
-        <Grid container rowSpacing={1} columnSpacing={{ lg: 2 }}>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ lg: 2 }}
+          justifyContent="flex-start"
+          justifyItems="flex-start"
+        >
           <Grid item xs={12} lg={12}>
             <Typography
               variant="h5"
