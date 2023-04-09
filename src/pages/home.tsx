@@ -93,8 +93,8 @@ export function HomePage() {
               fontSize="0.90rem"
               textAlign={{ xs: "center", md: "left" }}
             >
-              Find a perfect home with ease using our user-friendly catalog, no
-              need to go over dozens of PDFs from PAG-IBIG.
+              Find foreclosed properties with ease using our user-friendly
+              catalog, no need to go over dozens of PDFs from PAG-IBIG.
             </Typography>
             <Button
               variant="contained"
