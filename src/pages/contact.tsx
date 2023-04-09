@@ -216,7 +216,9 @@ export function ContactPage() {
                   <IconButton
                     color="primary"
                     sx={{ height: "5rem", width: "5rem" }}
-                    disabled
+                    onClick={() =>
+                      window.open("https://discord.gg/dAGxgynt8U", "_blank")
+                    }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +243,7 @@ export function ContactPage() {
                       color="text.secondary"
                       textAlign="center"
                     >
-                      Not Available.
+                      Scarriot
                     </Typography>
                   </Grid>
                 </Grid>

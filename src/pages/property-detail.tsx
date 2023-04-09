@@ -110,7 +110,7 @@ export const PropertyDetailPage = () => {
             <Grid item container xs={12} className="w-100">
               <DetailMap property={property} />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item container xs={12}>
               <DetailAuthor property={property} />
             </Grid>
           </Grid>
@@ -119,6 +119,7 @@ export const PropertyDetailPage = () => {
           <Grid
             direction="column"
             alignItems="center"
+            container
             justifyItems="center"
             sx={{
               width: "100%",
