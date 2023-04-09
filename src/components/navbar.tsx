@@ -124,6 +124,15 @@ const ResponsiveAppBar = () => {
               >
                 Scarriot
               </Typography>
+              {/* <img
+                src="./Scarriot-Banner-2.png"
+                alt="scarriot-log"
+                style={{
+                  width: "200px",
+                  height: "60px",
+                  border: "1px solid black",
+                }}
+              /> */}
             </Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
